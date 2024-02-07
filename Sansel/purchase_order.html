@@ -1,0 +1,499 @@
+<style>
+    .top
+{
+    text-align: center;
+    font-size: 15px;
+    font-weight: 600;
+    color: black;
+}
+.header
+{
+	border:1px solid black !important;
+	width:100%;
+	float:left;
+}
+
+.fdiv
+{
+	width:50%;
+	float:left;
+}
+
+.fdiv p 
+{
+	font-size:13px;
+	color:black;
+}
+.sdiv
+{
+	width:50%;
+	float:right;
+}
+.fp
+{
+    border-bottom: 1px solid black;
+    padding: 0 5px;
+    font-size: 13px;
+    color: black;
+    /*border-right: 1px solid black;*/
+}
+.sp
+{
+    /*border-bottom: 1px solid black;*/
+    padding: 0 5px;
+    font-size: 13px;
+    color: black;
+    /*border-right: 1px solid black;*/
+}
+.tbl1
+{
+    width:100%;
+}
+.tbl1 tr
+{
+    border-bottom:1px solid black;
+}
+.tbl1 td
+{
+    font-size:13px;
+    color:black;
+}
+.tbl2
+{
+    width:100%;
+    border-bottom:1px solid black;
+}
+.tbl2 th
+{
+    font-size:13px;
+    border:1px solid black;
+    border-top:none;
+    text-align:center;
+    color:black;
+}
+.tbl2 td
+{
+    font-size:13px;
+    border-right:1px solid black;
+    color:black;
+}
+.tbl4
+{
+    width:100%;
+    border-top:none !important;
+    border-bottom:none !important;
+}
+
+.tbl4 th
+{
+    font-size:13px;
+    color:black;
+    text-align:center;
+}
+#td
+{
+    padding:0px !important;
+}
+
+</style>
+
+{% set month = ['January', 'February', 'March', 'April', 'May', 'June', 'July',  'August', 'September', 'October', 'November', 'December'] %}
+{% set date_ = doc.transaction_date | str %}
+{% set month_int = date_.split("-")[1] | int %}
+<div id="header">
+    <img src="/files/sansel-header.JPEG">
+</div>
+<p class='top'>{% if doc.docstatus == 0 %} Draft {% else %} Purchase Order {% endif %}</p>
+<div class="header">
+	<div class="fdiv" height=130px>
+		<p style="" class='fp'>
+			<b>Invoice To <br>Sansel Instruments and Controls</b><br>
+			No.1/46,Ganga Nagar,M.M.D.A Colony<br>
+			Maduravoyal,Chennai-600095,Tamilnadu<br>
+			GSTIN/UIN: 33APGPS4066M1ZG<br>
+			State Name : Tamil Nadu, Code : 33<br>
+			E-Mail :  purchase@sansel.net
+		</p>
+		<p class="sp">
+			<b>Supplier</b><br>
+			{% if doc.supplier_address%}
+			{% set _address = frappe.get_doc('Address',doc.supplier_address)%}
+			{% else %}
+			{% set _address = "" %}
+			{% endif %}
+			{% if _address %}
+			{% if _address.address_title %} {{ _address.address_title }} <br>{% endif %}
+			{% if _address.address_line1 %} {{ _address.address_line1 }} <br>{% endif %}
+			{% if _address.address_line2 %} {{ _address.address_line2 }} <br>{% endif %}
+			{% if _address.city %} {{ _address.city }} <br>{% endif %}
+			{% if _address.gstin %}GSTIN/UIN : {{ _address.gstin }}<br>{% endif %}
+			{% if doc.contact_person %}
+                {% set contacts = frappe.get_doc("Contact",doc.contact_person) %}
+                {% if contacts.phone_nos[0].phone %}
+                    Phone : {{contacts.phone_nos[0].phone}}
+                {% endif %}
+            <br>{% endif %}
+			{% if _address.state %} State Name  :  {{ _address.state }} {% endif %},
+			{% if _address.gst_state_number %} Code :  {{ _address.gst_state_number }}<br>{% endif %}
+			{% endif %}
+		</p>
+	</div>
+	<div class="sdiv">
+		<table class="tbl1">
+			<tr height=50px>
+				<td style="border-right:1px solid black;border-left: 1px solid black;">Voucher No. <br> {% if doc.name %} {{ doc.name }} {% endif %}</td>
+				<td>Dated : {% if doc.transaction_date %} {{date_.split("-")[2]}} {{ month[month_int-1] }} {{ date_.split("-")[0] }} {% endif %}</td>
+				
+			</tr>
+			<tr height=50px>
+			    <td colspan=2 style="border-left: 1px solid black;">Mode/Terms of Payment: {% if doc.payment_terms_template %} {{ doc.doc.payment_terms_template }} {% endif %}</td>
+			</tr>
+
+			<tr height=50px>
+			    <td style="border-right:1px solid black;border-left: 1px solid black;">Supplier’s Ref./Order No.<br>{% if doc.order_confirmation_no %} {{ order_confirmation_no }} {% endif %}</td>
+				<td>Other Reference(s):<br>{% if doc.reference %}{{ doc.reference }}{% endif %}</td>
+			</tr>
+			<tr height=50px>
+				<td style="border-right:1px solid black;border-left: 1px solid black;">Despatched through<br>{% if doc.despatched_through %}{{doc.despatched_through}}{% endif %}</td>
+				<td >Destination: <br> Chennai</td>
+			</tr>
+			<tr height=100px style="border-bottom:none;border-left: 1px solid black;"><td>Terms of Delivery:<br>{% if doc.terms_of_delivery %}{{doc.terms_of_delivery}}{% endif %}</td></tr>
+		</table>
+	</div>
+</div>
+<table class="tbl2">
+	{% set tax_category = {"in_state":0} %}
+        {% if doc.taxes_and_charges %}
+            {% if "Input GST In-state" in doc.taxes_and_charges %}
+                {% set _ = tax_category.update({"in_state":1} ) %}
+                {% set _ = tax_category.update({"in_state":1} ) %}
+            {% else %}
+                {% set _ = tax_category.update({"in_state":0} ) %}
+        {% endif %}
+     {% endif %}
+    <tr>
+        <th>S.No</th>
+        <th>Description of Goods</th>
+        <th>HSN/SAC Code</th>
+        <th>Quantity</th>
+        <th>Rate</th>
+        <th>Per</th>
+        <!--<th>Discount(%)</th>-->
+        <th>Amount</th>
+    </tr>
+    {% set total_tax = {"cgstt": 0, "sgstt": 0, "igstt": 0} %}
+        {% set tax_type = {"is_incl_tax": 0} %}
+        {% set sales_taxes = frappe.db.get_all("Sales Taxes and Charges", filters={"parent": doc.name, "tax_amount": (">", 0)}, fields=['included_in_print_rate']) %}
+        {% if sales_taxes %}
+            {% if sales_taxes[0].included_in_print_rate == 1 %}
+                {% set _ = tax_type.update({"is_incl_tax": 1}) %}
+            {% endif %}
+        {% endif %}
+        {% for row in doc.items %}
+            {% set product_details = frappe.get_doc("Item", row.item_code) %}
+            {% set taxes = {"cgst": 0, "sgst": 0, "igst": 0} %}
+            
+            {% set row_tax_amount = {"tax_amount": 0} %}
+        
+        
+            {% if row.item_tax_rate != '{}' %}
+                {% for i in json.loads(row.item_tax_rate) %}
+                    {% if "CGST" in i %}
+                        {% set _ = taxes.update({"cgst": json.loads(row.item_tax_rate)[i]}) %}
+                        
+                    {% elif "SGST" in i %}
+                        {% set _ = taxes.update({"sgst": json.loads(row.item_tax_rate)[i]}) %}
+                        
+                    {% else %}
+                        {% set _ = taxes.update({"igst": json.loads(row.item_tax_rate)[i]}) %}
+                    {% endif %}
+                {% endfor %}
+            {% else %}
+                {% if doc.taxes_and_charges %}
+                    {% if tax_category.in_state == 0 %}
+                        {% set _ = taxes.update({"igst": doc.taxes[0].rate}) %}
+                        
+                    {% else %}
+                        {% set _ = taxes.update({"cgst": doc.taxes[0].rate}) %}
+                        {% set _ = taxes.update({"sgst": doc.taxes[1].rate}) %}
+                        
+                    {% endif %}
+                {% endif %}
+            {% endif %}
+
+            <tr>
+            	<td style="border-left:1px solid black;">{{ loop.index }}</td>
+            	<td width="40%" style="text-align:left;font-weight:600;">{{ product_details.item_name }}</td>
+            	<td style = "text-align:right;">{% if row.gst_hsn_code %} {{row.gst_hsn_code}} {% endif %}</td>
+	            <td style = "text-align:right;font-weight:600;">{{"%.0f"|format(row.qty)}} {{row.uom}}</td>
+	            <td style = "text-align:right;">{{frappe.utils.fmt_money(row.rate)}}</td>
+	            <td style = "text-align:right;">{{row.uom}}</td>
+	            <!--<td style = "text-align:right;">{{frappe.utils.fmt_money((1-row.rate/(row.rate+row.discount_amount))*100)}}%</td>-->
+            	<td style = "text-align:right;font-weight:600;">{{frappe.utils.fmt_money(row.net_amount)}}</td>
+            </tr>
+            <tr>
+                <td style="border-left:1px solid black;"></td>
+                <td style="text-align:left;">{{row.description}}</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <!--<td></td>-->
+                <td></td>
+            </tr>
+            {% endfor %}
+            <tr>
+            	<td style="border-left:1px solid black;"></td>
+            	<td style="text-align: right;">Net Total</td>
+            	<td></td>
+            	<td style="text-align: right;"></td>
+            	<td></td>
+            	<td></td>
+            	<!--<td></td>-->
+            	<td style="text-align:right;">{{ frappe.utils.fmt_money(doc.net_total)}}</td>
+            </tr>
+            {% if tax_category.in_state == 0 %}
+            <tr>
+                <td style="border-left:1px solid black;"></td>
+            	<td style="text-align: right;">IGST</td>
+            	<td></td>
+            	<td style="text-align: right;"></td>
+            	<td></td>
+            	<td></td>
+            	<!--<td></td>-->
+            	<td style="text-align:right;">{{ frappe.utils.fmt_money(doc.taxes[0].tax_amount) }}</td>
+            </tr>
+            {% else %}
+            <tr>
+                <td style="border-left:1px solid black;"></td>
+            	<td style="text-align: right;">CGST</td>
+            	<td></td>
+            	<td style="text-align: right;"></td>
+            	<td></td>
+            	<td></td>
+            	<!--<td></td>-->
+            	<td style="text-align:right;">{{ frappe.utils.fmt_money(doc.taxes[0].tax_amount) }}</td>
+            </tr>
+            <tr>
+                <td style="border-left:1px solid black;"></td>
+            	<td style="text-align: right;">SGST</td>
+            	<td></td>
+            	<td style="text-align: right;"></td>
+            	<td></td>
+            	<td></td>
+            	<!--<td></td>-->
+            	<td style="text-align:right;">{{ frappe.utils.fmt_money(doc.taxes[0].tax_amount) }}</td>
+            </tr>
+            {% endif %}
+            <tr>
+            	<td style="border-left:1px solid black;"></td>
+            	<td style="text-align: right;">Gross Total</td>
+            	<td></td>
+            	<td style="text-align: right;"></td>
+            	<td></td>
+            	<td></td>
+            	<!--<td></td>-->
+            	<td style="text-align:right;">{{ frappe.utils.fmt_money(doc.grand_total)}}</td>
+            </tr>
+</table>
+
+<table style="width: 100%;border-bottom:1px solid black;">
+	<tr style="border-right: 1px solid black;">
+		<td style="width: 50%;float:left;font-size: 13px;color:black;border-left: 1px solid black;">Amount Chargeable (in words)<br><span style="font-weight: 600;font-size:15px;">{{frappe.utils.money_in_words(doc.grand_total)}}</span></td>
+		<td style="width: 50%;float:right;font-size: 13px;color:black;text-align:end;">E. & O.E</td>
+	</tr>
+</table>
+
+<table class = "tbl4">
+	{% set tax_category = {"in_state":0} %}
+        {% if doc.taxes_and_charges %}
+            {% if "Input GST In-state" in doc.taxes_and_charges %}
+                {% set _ = tax_category.update({"in_state":1} ) %}
+                {% set _ = tax_category.update({"in_state":1} ) %}
+            {% else %}
+                {% set _ = tax_category.update({"in_state":0} ) %}
+        {% endif %}
+     {% endif %}
+
+	    
+	<tr>
+		<th style="border-left:1px solid black;" rowspan="2">HSN/SAC</th>
+		<th style="border-left:1px solid black;" rowspan="2">Taxable Value</th>
+		{% if tax_category.in_state == 0 %}
+		<th colspan="2" style="border-left:1px solid black;padding:2px !important;">IGST
+			<!-- <table style="width: 100%;">
+			    <tr style=";padding:2px !important;border-bottom:1px solid black">IGST</tr>
+				<tr style="text-align:center;">
+					<td style="width:50%;font-size:13px;color:black;padding:2px !important;border-right:1px solid black !important">Rate</td>
+					<td style="width:50%;font-size:13px;color:black;padding:2px !important;">Amount</td>
+				</tr>
+			</table> -->
+		</th>
+		{% else %}
+		<th colspan="2" style="border-left:1px solid black;padding: 2px !important;border-bottom:1px solid black;">Central Tax
+			<!-- <table style="width: 100%;">
+				<tr style=";padding:2px !important;border-bottom:1px solid black;text-align:center;">Central Tax</tr>
+				<tr style="text-align:center;">
+					<td style="font-size:13px;color:black;padding:2px !important;width:50%;">Rate</td>
+					<td style="font-size:13px;color:black;padding:2px !important;width:50%;">Amount</td>
+				</tr>
+			</table> -->
+		</th>
+		<th colspan="2" style="border-left:1px solid black;padding: 2px !important;border-bottom:1px solid black;">State Tax
+			<!-- <table style="width: 100%;">
+				<tr style=";padding:2px !important;border-bottom:1px solid black;text-align:center;">State Tax</tr>
+				<tr style="text-align:center;">
+					<td style="font-size:13px;color:black;padding:2px !important;width:50%;">Rate</td>
+					<td style="font-size:13px;color:black;padding:2px !important;width:50%;">Amount</td>
+				</tr>
+			</table> -->
+		</th>
+		{% endif %}
+		<th  style="border-left:1px solid black;border-right:1px solid black;" rowspan="2">Total Amount</th>
+	</tr>
+    <tr>
+        <td style="font-size:13px;color:black;text-align: center;border-right: 1px solid black;border-left: 1px solid black;">Rate</td>
+        <td style="font-size:13px;color:black;text-align: center;border-right: 1px solid black;">Amount</td>
+        <td style="font-size:13px;color:black;text-align: center;border-right: 1px solid black;">Rate</td>
+        <td style="font-size:13px;color:black;text-align: center;border-right: 1px solid black;">Amount</td>
+    </tr>
+
+
+{% set total_tax = {"cgstt": 0, "sgstt": 0, "igstt": 0} %}
+        {% set tax_type = {"is_incl_tax": 0} %}
+        {% set sales_taxes = frappe.db.get_all("Sales Taxes and Charges", filters={"parent": doc.name, "tax_amount": (">", 0)}, fields=['included_in_print_rate']) %}
+        {% if sales_taxes %}
+            {% if sales_taxes[0].included_in_print_rate == 1 %}
+                {% set _ = tax_type.update({"is_incl_tax": 1}) %}
+            {% endif %}
+        {% endif %}
+
+        {% for row in doc.items %}
+            {% set product_details = frappe.get_doc("Item", row.item_code) %}
+            {% set taxes = {"cgst": 0, "sgst": 0, "igst": 0} %}
+            
+            {% set row_tax_amount = {"tax_amount": 0} %}
+        
+        
+            {% if row.item_tax_rate != '{}' %}
+                {% for i in json.loads(row.item_tax_rate) %}
+                    {% if "CGST" in i %}
+                        {% set _ = taxes.update({"cgst": json.loads(row.item_tax_rate)[i]}) %}
+                        
+                    {% elif "SGST" in i %}
+                        {% set _ = taxes.update({"sgst": json.loads(row.item_tax_rate)[i]}) %}
+                        
+                    {% else %}
+                        {% set _ = taxes.update({"igst": json.loads(row.item_tax_rate)[i]}) %}
+                    {% endif %}
+                {% endfor %}
+            {% else %}
+                {% if doc.taxes_and_charges %}
+                    {% if tax_category.in_state == 0 %}
+                        {% set _ = taxes.update({"igst": doc.taxes[0].rate}) %}
+                        
+                    {% else %}
+                        {% set _ = taxes.update({"cgst": doc.taxes[0].rate}) %}
+                        {% set _ = taxes.update({"sgst": doc.taxes[1].rate}) %}
+                        
+                    {% endif %}
+                {% endif %}
+            {% endif %}
+
+
+	<tr style="border: 1px solid black;">
+		<td style="border:1px solid black;font-size:13px;color:black;">{% if row.gst_hsn_code %} {{row.gst_hsn_code}} {% endif %}</td>
+		<td style="border:1px solid black; font-size:13px;color:black;text-align:right;">{{frappe.utils.fmt_money(row.net_amount)}}</td>
+		{% if tax_category.in_state == 0 %}
+        <td style="font-size:13px;color:black;text-align:right;border-right: 1px solid black;border-right: 1px solid black;">{{taxes.igst | int}}%</td>
+		<td style="font-size:13px;color:black;text-align:right;border-right: 1px solid black;;">{% if tax_category.in_state == 0 %}
+        {%if tax_type.is_incl_tax==1%}
+            {{ frappe.utils.fmt_money(((row.amount|abs)-(((row.amount|abs)/((taxes.igst)+100|abs))*100))/1)}}
+            {%else%}
+            {{ frappe.utils.fmt_money(((row.amount|abs)*(taxes.igst/100)/1))}}
+            {%endif%} 
+            {%if tax_type.is_incl_tax==1%}
+            {% set _ = total_tax.update({"igstt":total_tax["igstt"]+(((row.amount|abs)-(((row.amount|abs)/(taxes.igst+100|abs))*100))/1) })%}
+            {% set _ = row_tax_amount.update({"tax_amount":row_tax_amount["tax_amount"]+(((row.amount|abs)-(((row.amount|abs)/(taxes.igst+100|abs))*100))/1) })%}
+            {%else%}
+            {% set _ = total_tax.update({"igstt":total_tax["igstt"]+(((row.amount|abs)*(taxes.igst/100))/1) })%}
+            {% set _ = row_tax_amount.update({"tax_amount":row_tax_amount["tax_amount"]+(((row.amount|abs)*(taxes.igst/100))/1) })%}
+
+            {% endif %}
+            {% endif %}
+        </td>
+		{% else %}
+		<td style="font-size:13px;color:black;text-align:right;border-right: 1px solid black;">{{taxes.cgst | int}}%</td>
+		<td style="font-size:13px;color:black;text-align:right;border-right: 1px solid black;;">{% if tax_category.in_state == 1 %}
+            {%if tax_type.is_incl_tax==1%}
+                {{ frappe.utils.fmt_money(((row.amount|abs)-(((row.amount|abs)/((taxes.cgst)+100|abs))*100)))}}
+                {%else%}
+                {{ frappe.utils.fmt_money(((row.amount|abs)*(taxes.cgst/100)/1))}}
+                {%endif%}
+                {%if tax_type.is_incl_tax==1%}
+                {% set _ = total_tax.update({"cgstt":total_tax["cgstt"]+(((row.amount|abs)-(((row.amount|abs)/(taxes.cgst+100|abs))*100))) })%}
+                {% set _ = row_tax_amount.update({"tax_amount":row_tax_amount["tax_amount"]+(((row.amount|abs)-(((row.amount|abs)/(taxes.cgst+100|abs))*100))) })%}
+                {%else%}
+                {% set _ = total_tax.update({"cgstt":total_tax["cgstt"]+(((row.amount|abs)*(taxes.cgst/100))) })%}
+                {% set _ = row_tax_amount.update({"tax_amount":row_tax_amount["tax_amount"]+(((row.amount|abs)*(taxes.cgst/100))) })%}
+                {% endif %}
+                {% endif %}
+            </td>
+			<td style="font-size:13px;color:black;text-align:right;border-right: 1px solid black;">{{taxes.sgst | int}}%</td>
+			<td style="font-size:13px;color:black;text-align:right;border-right: 1px solid black;">{% if tax_category.in_state == 1 %}
+		            {%if tax_type.is_incl_tax==1%}
+		                {{ frappe.utils.fmt_money(((row.amount|abs)-(((row.amount|abs)/((taxes.cgst)+100|abs))*100))/1)}}
+		                {%else%}
+		                {{ frappe.utils.fmt_money(((row.amount|abs)*(taxes.cgst/100)/1))}}
+		                {%endif%}
+		                {%if tax_type.is_incl_tax==1%}
+		                {% set _ = total_tax.update({"sgstt":total_tax["sgstt"]+(((row.amount|abs)-(((row.amount|abs)/(taxes.cgst+100|abs))*100))) })%}
+		                {% set _ = row_tax_amount.update({"tax_amount":row_tax_amount["tax_amount"]+(((row.amount|abs)-(((row.amount|abs)/(taxes.cgst+100|abs))*100))/2) })%}
+		                {%else%}
+		                {% set _ = total_tax.update({"sgstt":total_tax["sgstt"]+(((row.amount|abs)*(taxes.cgst/100))) })%}
+		                {% set _ = row_tax_amount.update({"tax_amount":row_tax_amount["tax_amount"]+(((row.amount|abs)*(taxes.cgst/100))) })%}
+		            {% endif %}
+		            {% endif %}
+		    </td>
+		{% endif %}
+		
+		<td style="border:1px solid black;border-bottom:0;font-size:13px;color:black;text-align:right;">{{ frappe.utils.fmt_money(doc.grand_total)}}</td>
+	</tr>
+	{% endfor %}
+</table>
+
+<div style="width: 100%;border: 1px solid black;border-top: none;">
+	<div style="width: 50%;float: left;padding: 0 5px;">
+		<p>Tax Amount(in words) : {{ frappe.utils.fmt_money(doc.grand_total)}}</p>
+		<p>Company's PAN : APGPS4066M </p>
+        <p>Reference  : {% if doc.reference %} {{doc.reference}} {% endif %} </p>
+        <p>Narration : {% if doc.narration %} {{doc.narration}} {% endif %}</p>
+		<p>Declaration : <br>
+			{% if doc.narration %}{{doc.narration}}{% endif %}
+		</p>
+		<div style="border:1px solid black;width: 95%;">
+			<p style="padding-left: 5px;">Verified By</p>
+			<p style="padding-top: 25px;padding-left: 5px;"></p>
+		</div><br>
+	</div>
+	<div style="width: 50%;float: right;padding: 0 5px;border-left:1px solid black;">
+		<p>Company’s Bank Details</p>
+        {% set bank_account = frappe.get_doc('Bank Account',doc.account_name)%}
+
+        {% if bank_account %}
+        <p>{% if bank_account.account_name %} Bank Account Name : {{bank_account.account_name}} {% endif %}</p>
+        <p>{% if bank_account.bank %} Bank Name : {{bank_account.bank}} {% endif %}</p>
+        <p>{% if bank_account.bank_account_no %} Account Number : {{bank_account.bank_account_no}} {% endif %}</p>
+        <p>{% if bank_account.custom_ifsc_code %} IFSC Code : {{bank_account.custom_ifsc_code}} {% endif %} </p>
+        <p>{% if bank_account.branch_code %} Branch Code : {{bank_account.branch_code}} {% endif %}</p>
+        {% endif %}
+
+		<div style="border:1px solid black;width: 95%;">
+			<p style="text-align:end;padding-right: 5px;">for Sansel Instruments and Controls-2023-24</p>
+			<p style="padding-top: 25px;padding-right: 5px;text-align:end;">Authorised Signatory</p>
+		</div><br>
+	</div>
+</div>
+<div id="footer" style="border:1px solid black; border-top:0;padding:1px !important;">
+    <img src="/files/sansel-footer.jpg">
+</div>

@@ -1,0 +1,1267 @@
+{% if doc.company == 'Doortisan Creations Private Limited' %}
+<style>
+em {
+    font-style: normal;
+    font-size:11px;
+}
+.ql-editor {
+    font-size: 9px;
+}
+#dates td
+{
+    font-size:13px;
+    color:black;
+}
+#dates
+{
+    float:right;
+}
+li
+{
+    font-size:10px;
+}
+.ql-editor {
+    line-height:12px;
+    font-size:13px;
+}
+[document-status] {
+        display:none;
+    }
+.print-heading {
+    display:none;
+}
+.ql-editor p
+{
+    font-size: 11px;
+    color: black;
+    overflow-y: hidden;
+}
+.print-format .table-bordered
+{
+    border:1px solid black;
+}
+.print-format .table-bordered th
+{
+    border:1px solid black;
+    text-align:center;
+    color:black;
+    font-size:11px;
+    padding:2px !important;
+    font-weight:600;
+}
+
+.print-format .table-bordered td
+{
+    border:1px solid black;
+    text-align:center;
+    color:black;
+    font-size:11px;
+    padding:2px !important;
+}
+</style>
+
+<div style="width: 100%;float: left;border-top: 1px solid black;border-right: 1px solid black;border-left: 1px solid black;">
+    <div style="width: 30%;float: left;padding-top: 50px;padding:5px;"><img src="/files/image_2023_08_24T15_16_35_199Z.png"> </div>
+    <div style="width: 68%;float: right;">
+        <p style="font-size: 20px;color:black;font-weight:600;">{{ doc.company }}</p>
+        {% if doc.company_address %}
+            
+            {% set address=frappe.get_doc('Address',doc.company_address) %}
+            {% if address %}
+            <p style="font-size: 13px;color:black;">
+                {% if address.address_line1 %} {{ address.address_line1 }}<br> {% endif %}
+                {% if address.address_line2 %}{{ address.address_line2 }}<br> {% endif %}
+                {% if address.city %} {{ address.city}}, {% endif %} {% if address.state %} {{address.state}}<br> {% endif %}
+                {% if address.pincode %} Pincode :{{address.pincode}}<br> {% endif %}                
+                            
+                {% if address.phone %} Phone : {{address.phone}} {% endif %}
+                <p style="font-size: 13px;color:black;">{% if address.gstin %}GSTIN: {{ address.gstin }} {% endif %}</p>
+            </p>
+            {% endif %}
+            {% endif %}
+    </div>
+</div>
+
+<div style="width: 100%;border-bottom: 1px solid gray;color: white;float: left;">
+    <div style="width: 50%; float: left;border-right: 1px solid black;border-top: 1px solid black;background-color: lightgray;border-left: 1px solid black;">
+        <p style="font-size: 13px;color:black;text-align: center;">Billing Address</p>
+    </div>
+    <div style="width: 50%; float: right;border-top: 1px solid black;background-color: lightgray;border-right: 1px solid black;">
+        <p style="font-size: 13px;color:black;text-align: center;">Delivery Address</p>
+    </div>
+</div>
+
+<div style="width: 100%;float: left;border: 1px solid black;">
+    <div style="width: 50%;float: left;border-right: 1px solid black">
+        
+        {% if doc.customer_address %}
+        {% set customer_address = frappe.get_doc('Address',doc.customer_address) %}
+        <p style="font-size: 13px;color:black;padding:5px;">
+            <b>{% if doc.customer_name %} {{doc.customer_name}}<br> {% endif %}</b>
+            {% if customer_address.address_line1 %} {{ customer_address.address_line1 }}<br> {% endif %}
+            {% if customer_address.address_line2 %} {{ customer_address.address_line2 }}<br> {% endif %}
+            {% if customer_address.city %} {{ customer_address.city }} - {% endif %} 
+            {% if customer_address.pincode %} {{customer_address.pincode}}<br> {% endif %}
+            {% if customer_address.state %} {{customer_address.state}} <br>{% endif %}
+            {% if customer_address.country %} {{customer_address.country}} <br>{% endif %}
+            {% if customer_address.gstin %} GSTIN : {{customer_address.gstin}} <br>{% endif %}
+            {% if doc.contact_person %}
+            {% set cont = frappe.get_doc('Contact',doc.contact_person) %}
+            {% if cont.phone_nos %}Phone : +91 {{cont.phone_nos[0].phone}}{% endif %}
+            {% endif %}
+        </p>
+        {% endif %}
+    </div>
+    <div style="width: 50%;float: right;">
+        <p style="font-size:13px;color:black;padding:5px;">
+            {% if doc.shipping_address %}
+            {% set ship_address=frappe.get_doc('Address',doc.shipping_address_name) %}
+            <b>{% if ship_address.address_title %} {{ship_address.address_title}}<br> {% endif %}</b>
+            {% if ship_address.address_line1 %} {{ ship_address.address_line1 }},<br>{% endif %}
+            {% if ship_address.address_line2 %}{{ship_address.address_line2}},<br>{% endif %}
+            
+            {% if ship_address.city %} {{ ship_address.city}} - {% endif %} {% if ship_address.pincode %} {{ship_address.pincode}} <br>{% endif %}
+            {%if ship_address.state %} {{ship_address.state}}<br> {% endif %}
+            {% if ship_address.country %} {{ ship_address.country}}<br>{% endif %}
+
+            {% if ship_address.gstin %} GSTIN : {{ship_address.gstin}} <br>{% endif %}
+            {% if doc.contact_person %} 
+            {% set contacts = frappe.get_doc("Contact",doc.contact_person) %}
+            {% if contacts.phone_nos %} Phone : +91{{contacts.phone_nos[0].phone}} {% endif %}
+            {% endif %}
+            {% endif %}
+        </p>
+    </div>
+</div>
+
+
+<div style="width: 100%;float: left;padding-top:20px ;">
+    <table style="width: 100%;">
+        <thead style="background-color: #272829;">
+            <th style="font-size: 13px;color: white;font-weight: 600;">Sales Person</th>
+            <th style="font-size: 13px;color: white;font-weight: 600;">Order Date</th>
+            <th style="font-size: 13px;color: white;font-weight: 600;">Branch Name</th>
+            <th style="font-size: 13px;color: white;font-weight: 600;">Quotation No</th>
+            <th style="font-size: 13px;color: white;font-weight: 600;">Product</th>
+            <th style="font-size: 13px;color: white;font-weight: 600;">Sales Order No</th>
+        </thead>
+        <tr>
+            <td style="font-size: 13px;color: black;">{% if doc.owner %} {% set sales_person = frappe.get_doc('User',doc.owner) %} {{ sales_person.first_name}} {% endif %}</td>
+            <td style="font-size: 13px;color: black;">{% if doc.delivery_date %} {{doc.get_formatted('delivery_date')}} {% endif %}</td>
+            <td style="font-size: 13px;color: black;">
+                {% if doc.company_address %}
+                {% set address=frappe.get_doc('Address',doc.company_address) %}
+                {% if address.city %} {{ address.city}} {% endif %}
+                {% endif %}
+            </td>
+            <td style="font-size: 13px;color: black;">{% if doc.items[0].prevdoc_docname %} {{doc.items[0].prevdoc_docname}} {% endif %} </td>
+            <td style="font-size: 13px;color: black;"> D'Sign Doors</td>
+            <td style="font-size: 13px;color: black;"> {{doc.name}}</td>
+        </tr>
+    </table>
+</div>
+
+<div style="width:100%;">
+    <table style="width:100%;margin-top:30px !important;">
+        <thead style="border-bottom:1px solid lightgray;background-color: #272829;">           
+            
+            <tr>
+                <th style="font-size:13px;text-align:center;font-weight: 600;color:white">#</th>
+                <th style="font-size:13px;text-align:center;font-weight: 600;color:white" colspan="2">Item & Description</th>
+                <th style="font-size:13px;text-align:center;font-weight: 600;color:white">HSN Code</th>
+                <th style="font-size:13px;text-align:center;font-weight: 600;color:white">Qty</th>
+                <th style="font-size:13px;text-align:center;font-weight: 600;color:white">Rate</th>
+               
+                <th style="font-size:13px;text-align:center;font-weight: 600;color:white">Amount ({{doc.currency}})</th>
+            </tr>
+        </thead>
+
+                {% for row in doc.items %}
+                {% set product_details = frappe.get_doc("Item",row.item_code) %}
+                   
+            <tr style="border-bottom:1px solid lightgray;">
+                <td style="font-size: 12px;color:black;">{{ loop.index }}</td>
+                <td style="width: 10%;"><img src="{% if product_details.image %} https://homegenie2023.frappe.cloud/{{product_details.image}} {% endif %}"></td>
+                <td style = "text-align: left;padding:0 5px !important;font-size:12px;color:black;">
+                    <b>{{ product_details.item_name }}</b><br>{% if row.description %} {{row.description}} {% endif %}<br>
+                </td>
+                <td style = "text-align:center;font-size:12px;color:black;">{% if product_details.gst_hsn_code %} {{product_details.gst_hsn_code}} {% endif %}</td>
+                <td style = "text-align:center;font-size:12px;color:black;">{{row.qty}} {{row.uom}}</td>
+                <td style = "text-align:right;font-size:12px;color:black;white-space:nowrap;">{{frappe.utils.fmt_money(row.rate,currency=doc.currency)}}</td>
+               <td style = "text-align:right;font-size:12px;color:black;white-space:nowrap;">
+                {% set amount = row.qty * row.rate %}
+                {{frappe.utils.fmt_money(amount,currency=doc.currency)}}</td>
+            </tr>
+            {% endfor %}
+    </table>
+</div>
+{% if doc.other_charges_calculation %}
+<div style="width: 100%;float: left;">
+    {{doc.other_charges_calculation}}
+ </div>
+ {% endif %}
+
+<div style="width: 45%;float:right;">
+    <table style="float:right; width:100% !important;">                
+        <tr>
+            <td style="text-align:right;font-size: 13px;">Sub Total</td>
+            <td style="text-align:right;font-size: 13px;">{{frappe.utils.fmt_money(doc.total,currency=doc.currency)}}</td>
+        </tr>
+        {% if doc.additional_discount_percentage or doc.discount_amount %} 
+        <tr>
+            <td  style="font-size:13px;text-align:right;color: black;">Discounts ({{doc.additional_discount_percentage}}%)</td>
+            <td style="text-align:right;font-size: 13px;color: black;">{{frappe.utils.fmt_money(doc.discount_amount,currency=doc.currency)}}</td>
+        </tr>
+        {% endif %}
+
+        {% if doc.total_taxes_and_charges %}
+        <tr>
+            <td  style="font-size:13px;text-align:right;font-size:13px;color:black;">Total Tax Charges</td>
+            <td style="text-align:right;font-size:13px;color:black;white-space: nowrap;">
+                {{frappe.utils.fmt_money(doc.total_taxes_and_charges,currency=doc.currency)}}
+            </td>
+        </tr>
+        {% endif %}
+        {% if doc.rounding_adjustment %}
+        <tr>
+            <td  style="font-size:13px;text-align:right;">Adjustment</td>
+            <td style="text-align:right;font-size:13px;">  {{frappe.utils.fmt_money(doc.rounding_adjustment,currency=doc.currency)}} </td>
+        </tr>
+        {% endif %} 
+        <tr style="background-color: silver;">
+            <td style="text-align:right;font-size: 13px;font-weight: 600;">Total</td>
+            <td style="text-align:right;font-size: 13px;font-weight: 600;">{{ doc.currency }} {{frappe.utils.fmt_money(doc.rounded_total)}}</td>
+        </tr>
+    </table>
+</div>
+
+<div style="width: 100%;float: left;padding-top:20px;">
+    <p style="font-size: 13px;color: black;"><b>Total In Words</b> : {{frappe.utils.money_in_words(doc.rounded_total)}}</p>
+</div>
+
+{% if doc.terms %}
+	{% set terms_text = doc.terms | replace ('<div class="ql-editor read-mode">','') | replace('</div>','') %}
+		<div style="width:100%;padding-top:65px;padding:0 5px;float: left;">
+		{{ terms_text }}
+    {% endif %}
+
+<div style="width: 100%;float: left;padding-top:10px">
+    <p style="font-size: 14px;color: black;">This is a system generated bill and it does not requires any signature</p>
+</div>
+
+{% endif %}
+
+{% if doc.company == 'Homegenie Building Products Private Limited' %}
+<style>
+em {
+    font-style: normal;
+    font-size:11px;
+}
+.ql-editor {
+    font-size: 9px;
+}
+#dates td
+{
+    font-size:13px;
+    color:black;
+}
+#dates
+{
+    float:right;
+}
+li
+{
+    font-size:10px;
+}
+.ql-editor {
+    line-height:12px;
+    font-size:13px;
+}
+[document-status] {
+        display:none;
+    }
+.print-heading {
+    display:none;
+}
+.ql-editor p
+{
+    font-size: 11px;
+    color: black;
+    overflow-y: hidden;
+}
+.print-format .table-bordered
+{
+    border:1px solid black;
+}
+.print-format .table-bordered th
+{
+    border:1px solid black;
+    text-align:center;
+    color:black;
+    font-size:11px;
+    padding:2px !important;
+    font-weight:600;
+}
+
+.print-format .table-bordered td
+{
+    border:1px solid black;
+    text-align:center;
+    color:black;
+    font-size:11px;
+    padding:2px !important;
+}
+</style>
+
+   <div style="width: 100%;float: left;border-top: 1px solid black;border-right: 1px solid black;border-left: 1px solid black;">
+        <div style="width: 30%;float: left;padding-top: 50px;padding:5px;"><img src="/files/image_2023_08_25T05_00_36_995Z.png"> </div>
+        <div style="width: 68%;float: right;">
+            <p style="font-size: 20px;color:black;font-weight:600;">{{ doc.company }}</p>
+            {% if doc.company_address %}
+            {% set address_name = frappe.get_doc('Address',doc.company_address) %}
+            {% if address_name %}
+            <p style="font-size: 13px;color:black;">
+                {% if address_name.address_line1 %} {{ address_name.address_line1 }}<br> {% endif %}
+                {% if address_name.address_line2 %}{{ address_name.address_line2 }}<br> {% endif %}
+                {% if address_name.city %} {{ address_name.city}}, {% endif %} {% if address_name.state %} {{address_name.state}}<br> {% endif %}
+                {% if address_name.pincode %} Pincode :{{address_name.pincode}}<br> {% endif %}                
+                            
+                {% if address_name.phone %} Phone : {{address_name.phone}} {% endif %}
+                <p style="font-size: 13px;color:black;">{% if address_name.gstin %}GSTIN: {{ address_name.gstin }} {% endif %}</p>
+            </p>
+            {% endif %}
+            {% endif %}
+        </div>
+    </div>
+<div style="width: 100%;border-bottom: 1px solid gray;color: white;float: left;">
+    <div style="width: 50%; float: left;border-right: 1px solid black;border-top: 1px solid black;background-color: lightgray;border-left: 1px solid black;">
+        <p style="font-size: 13px;color:black;text-align: center;">Billing Address</p>
+    </div>
+    <div style="width: 50%; float: right;border-top: 1px solid black;background-color: lightgray;border-right: 1px solid black;">
+        <p style="font-size: 13px;color:black;text-align: center;">Delivery Address</p>
+    </div>
+</div>
+
+<div style="width: 100%;float: left;border: 1px solid black;">
+    <div style="width: 50%;float: left;border-right: 1px solid black">
+        
+        {% if doc.customer_address %}
+        {% set customer_address = frappe.get_doc('Address',doc.customer_address) %}
+        <p style="font-size: 13px;color:black;padding:5px;">
+            <b>{% if doc.customer_name %} {{doc.customer_name}}<br> {% endif %}</b>
+            {% if customer_address.address_line1 %} {{ customer_address.address_line1 }}<br> {% endif %}
+            {% if customer_address.address_line2 %} {{ customer_address.address_line2 }}<br> {% endif %}
+            {% if customer_address.city %} {{ customer_address.city }} - {% endif %} 
+            {% if customer_address.pincode %} {{customer_address.pincode}}<br> {% endif %}
+            {% if customer_address.state %} {{customer_address.state}} <br>{% endif %}
+            {% if customer_address.country %} {{customer_address.country}} <br>{% endif %}
+            {% if customer_address.gstin %} GSTIN : {{customer_address.gstin}} <br>{% endif %}
+            {% if doc.contact_person %}
+            {% set cont = frappe.get_doc('Contact',doc.contact_person) %}
+            {% if cont.phone_nos %}Phone : +91 {{cont.phone_nos[0].phone}}{% endif %}
+            {% endif %}
+        </p>
+        {% endif %}
+    </div>
+    <div style="width: 50%;float: right;">
+        <p style="font-size:13px;color:black;padding:5px;">
+            {% if doc.shipping_address %}
+            {% set ship_address=frappe.get_doc('Address',doc.shipping_address_name) %}
+            <b>{% if ship_address.address_title %} {{ship_address.address_title}}<br> {% endif %}</b>
+            {% if ship_address.address_line1 %} {{ ship_address.address_line1 }},<br>{% endif %}
+            {% if ship_address.address_line2 %}{{ship_address.address_line2}},<br>{% endif %}
+            
+            {% if ship_address.city %} {{ ship_address.city}} - {% endif %} {% if ship_address.pincode %} {{ship_address.pincode}} <br>{% endif %}
+            {%if ship_address.state %} {{ship_address.state}}<br> {% endif %}
+            {% if ship_address.country %} {{ ship_address.country}}<br>{% endif %}
+
+            {% if ship_address.gstin %} GSTIN : {{ship_address.gstin}} <br>{% endif %}
+            {% if doc.contact_person %} 
+            {% set contacts = frappe.get_doc("Contact",doc.contact_person) %}
+            {% if contacts.phone_nos %} Phone : +91{{contacts.phone_nos[0].phone}} {% endif %}
+            {% endif %}
+            {% endif %}
+        </p>
+    </div>
+</div>
+
+
+<div style="width: 100%;float: left;padding-top: 20px !important;">
+    <table style="width: 100%;">
+        <thead style="background-color: #272829;">
+            <th style="font-size: 13px;color: white;font-weight: 600;">Sales Person</th>
+            <th style="font-size: 13px;color: white;font-weight: 600;">Order Date</th>
+            <th style="font-size: 13px;color: white;font-weight: 600;">Branch Name</th>
+            <th style="font-size: 13px;color: white;font-weight: 600;">Quotation No</th>
+            <th style="font-size: 13px;color: white;font-weight: 600;">Product</th>
+            <th style="font-size: 13px;color: white;font-weight: 600;">Sales Order No</th>
+        </thead>
+        <tr>
+            <td style="font-size: 13px;color: black;">{% if doc.owner %} {% set sales_person = frappe.get_doc('User',doc.owner) %} {{ sales_person.first_name}} {% endif %}</td>
+            <td style="font-size: 13px;color: black;">{% if doc.delivery_date %} {{doc.get_formatted('delivery_date')}} {% endif %}</td>
+            <td style="font-size: 13px;color: black;">
+                {% if doc.company_address %}
+                {% set address=frappe.get_doc('Address',doc.company_address) %}
+                {% if address.city %} {{ address.city}} {% endif %}
+                {% endif %}
+            </td>
+            <td style="font-size: 13px;color: black;">{% if doc.items[0].prevdoc_docname %} {{doc.items[0].prevdoc_docname}} {% endif %} </td>
+            <th style="font-size: 13px;color: black;">Rocotile</th>
+            <th style="font-size: 13px;color: black;">{{doc.name}}</th>
+        </tr>
+    </table>
+</div>
+
+<div style="width:100%;">
+    <table style="width:100%;margin-top:30px !important;">
+        <thead style="border-bottom:1px solid lightgray;background-color: #272829;">           
+            
+            <tr>
+                <th style="font-size:13px;text-align:center;font-weight: 600;color:white">#</th>
+                <th style="font-size:13px;text-align:center;font-weight: 600;color:white" colspan="2">Item & Description</th>
+                <th style="font-size:13px;text-align:center;font-weight: 600;color:white">HSN Code</th>
+                <th style="font-size:13px;text-align:center;font-weight: 600;color:white">Qty</th>
+                <th style="font-size:13px;text-align:center;font-weight: 600;color:white">Rate</th>
+               
+                <th style="font-size:13px;text-align:center;font-weight: 600;color:white">Amount ({{doc.currency}})</th>
+            </tr>
+        </thead>
+
+                {% for row in doc.items %}
+                {% set product_details = frappe.get_doc("Item",row.item_code) %}
+                   
+            <tr style="border-bottom:1px solid lightgray;">
+                <td style="font-size: 12px;color:black;">{{ loop.index }}</td>
+                <td style="width: 10%;"><img src="{% if product_details.image %} https://homegenie2023.frappe.cloud/{{product_details.image}} {% endif %}"></td>
+                <td style = "text-align: left;padding:0 5px !important;font-size:12px;color:black;">
+                    <b>{{ product_details.item_name }}</b><br>{% if row.description %} {{row.description}} {% endif %}<br>
+                </td>
+                <td style = "text-align:center;font-size:12px;color:black;">{% if product_details.gst_hsn_code %} {{product_details.gst_hsn_code}} {% endif %}</td>
+                <td style = "text-align:center;font-size:12px;color:black;">{{row.qty}} {{row.uom}}</td>
+                <td style = "text-align:right;font-size:12px;color:black;white-space:nowrap;">{{frappe.utils.fmt_money(row.rate,currency=doc.currency)}}</td>
+               <td style = "text-align:right;font-size:12px;color:black;white-space:nowrap;">
+                {% set amount = row.qty * row.rate %}
+                {{frappe.utils.fmt_money(amount,currency=doc.currency)}}</td>
+            </tr>
+            {% endfor %}
+    </table>
+</div>
+
+{% if doc.other_charges_calculation %}
+<div style="width: 100%;float: left;">
+    {{doc.other_charges_calculation}}
+ </div>
+ {% endif %}
+
+<div style="width: 45%;float:right;">
+    <table style="float:right; width:100% !important;">                
+        <tr>
+            <td style="text-align:right;font-size: 13px;">Sub Total</td>
+            <td style="text-align:right;font-size: 13px;">{{frappe.utils.fmt_money(doc.total,currency=doc.currency)}}</td>
+        </tr>
+        {% if doc.additional_discount_percentage or doc.discount_amount %} 
+        <tr>
+            <td  style="font-size:13px;text-align:right;color: black;">Discounts ({{doc.additional_discount_percentage}}%)</td>
+            <td style="text-align:right;font-size: 13px;color: black;">{{frappe.utils.fmt_money(doc.discount_amount,currency=doc.currency)}}</td>
+        </tr>
+        {% endif %}
+
+        {% if doc.total_taxes_and_charges %}
+        <tr>
+            <td  style="font-size:13px;text-align:right;font-size:13px;color:black;">Total Tax Charges</td>
+            <td style="text-align:right;font-size:13px;color:black;white-space: nowrap;">
+                {{frappe.utils.fmt_money(doc.total_taxes_and_charges,currency=doc.currency)}}
+            </td>
+        </tr>
+        {% endif %}
+        {% if doc.rounding_adjustment %}
+        <tr>
+            <td  style="font-size:13px;text-align:right;">Adjustment</td>
+            <td style="text-align:right;font-size:13px;">  {{frappe.utils.fmt_money(doc.rounding_adjustment,currency=doc.currency)}} </td>
+        </tr>
+        {% endif %} 
+        <tr style="background-color: silver;">
+            <td style="text-align:right;font-size: 13px;font-weight: 600;">Total</td>
+            <td style="text-align:right;font-size: 13px;font-weight: 600;">{{ doc.currency }} {{frappe.utils.fmt_money(doc.rounded_total)}}</td>
+        </tr>
+    </table>
+</div>
+
+<div style="width: 100%;float: left;padding-top:20px;">
+    <p style="font-size: 13px;color: black;"><b>Total In Words</b> : {{frappe.utils.money_in_words(doc.rounded_total)}}</p>
+</div>
+
+{% if doc.terms %}
+	{% set terms_text = doc.terms | replace ('<div class="ql-editor read-mode">','') | replace('</div>','') %}
+		<div style="width:100%;padding-top:65px;padding:0 5px;float: left;">
+		{{ terms_text }}
+    {% endif %}
+
+<div style="width: 100%;float: left;padding-top:10px">
+    <p style="font-size: 14px;color: black;">This is a system generated bill and it does not requires any signature</p>
+</div>
+
+{% endif %}
+
+{% if doc.company == 'Bioman Sewage Solutions Private Limited' %}
+<style>
+em {
+    font-style: normal;
+    font-size:11px;
+}
+.ql-editor {
+    font-size: 9px;
+}
+#dates td
+{
+    font-size:13px;
+    color:black;
+}
+#dates
+{
+    float:right;
+}
+li
+{
+    font-size:10px;
+}
+.ql-editor {
+    line-height:12px;
+    font-size:13px;
+}
+[document-status] {
+        display:none;
+    }
+.print-heading {
+    display:none;
+}
+.ql-editor p
+{
+    font-size: 11px;
+    color: black;
+    overflow-y: hidden;
+}
+.print-format .table-bordered
+{
+    border:1px solid black;
+}
+.print-format .table-bordered th
+{
+    border:1px solid black;
+    text-align:center;
+    color:black;
+    font-size:11px;
+    padding:2px !important;
+    font-weight:600;
+}
+
+.print-format .table-bordered td
+{
+    border:1px solid black;
+    text-align:center;
+    color:black;
+    font-size:11px;
+    padding:2px !important;
+}
+</style>
+
+<div style="width: 100%;float: left;border-top: 1px solid black;border-right: 1px solid black;border-left: 1px solid black;">
+    <div style="width: 30%;float: left;padding-top: 50px;padding:5px;"><img src="/files/image_2023_08_25T05_29_11_691Z.png"> </div>
+    <div style="width: 68%;float: right;">
+        <p style="font-size: 20px;color:black;font-weight:600;">{{ doc.company }}</p>
+        {% if doc.company_address %}
+            
+            {% set address=frappe.get_doc('Address',doc.company_address) %}
+            {% if address %}
+            <p style="font-size: 13px;color:black;">
+                {% if address.address_line1 %} {{ address.address_line1 }}<br> {% endif %}
+                {% if address.address_line2 %}{{ address.address_line2 }}<br> {% endif %}
+                {% if address.city %} {{ address.city}}, {% endif %} {% if address.state %} {{address.state}}<br> {% endif %}
+                {% if address.pincode %} Pincode :{{address.pincode}}<br> {% endif %}                
+                            
+                {% if address.phone %} Phone : {{address.phone}} {% endif %}
+                <p style="font-size: 13px;color:black;">{% if address.gstin %}GSTIN: {{ address.gstin }} {% endif %}</p>
+            </p>
+            {% endif %}
+            {% endif %}
+    </div>
+</div>
+
+<div style="width: 100%;border-bottom: 1px solid gray;color: white;float: left;">
+    <div style="width: 50%; float: left;border-right: 1px solid black;border-top: 1px solid black;background-color: lightgray;border-left: 1px solid black;">
+        <p style="font-size: 13px;color:black;text-align: center;">Billing Address</p>
+    </div>
+    <div style="width: 50%; float: right;border-top: 1px solid black;background-color: lightgray;border-right: 1px solid black;">
+        <p style="font-size: 13px;color:black;text-align: center;">Delivery Address</p>
+    </div>
+</div>
+
+<div style="width: 100%;float: left;border: 1px solid black;">
+    <div style="width: 50%;float: left;border-right: 1px solid black">
+        
+        {% if doc.customer_address %}
+        {% set customer_address = frappe.get_doc('Address',doc.customer_address) %}
+        <p style="font-size: 13px;color:black;padding:5px;">
+            <b>{% if doc.customer_name %} {{doc.customer_name}}<br> {% endif %}</b>
+            {% if customer_address.address_line1 %} {{ customer_address.address_line1 }}<br> {% endif %}
+            {% if customer_address.address_line2 %} {{ customer_address.address_line2 }}<br> {% endif %}
+            {% if customer_address.city %} {{ customer_address.city }} - {% endif %} 
+            {% if customer_address.pincode %} {{customer_address.pincode}}<br> {% endif %}
+            {% if customer_address.state %} {{customer_address.state}} <br>{% endif %}
+            {% if customer_address.country %} {{customer_address.country}} <br>{% endif %}
+            {% if customer_address.gstin %} GSTIN : {{customer_address.gstin}} <br>{% endif %}
+            {% if doc.contact_person %}
+            {% set cont = frappe.get_doc('Contact',doc.contact_person) %}
+            {% if cont.phone_nos %}Phone : +91 {{cont.phone_nos[0].phone}}{% endif %}
+            {% endif %}
+        </p>
+        {% endif %}
+    </div>
+    <div style="width: 50%;float: right;">
+        <p style="font-size:13px;color:black;padding:5px;">
+            {% if doc.shipping_address %}
+            {% set ship_address=frappe.get_doc('Address',doc.shipping_address_name) %}
+            <b>{% if ship_address.address_title %} {{ship_address.address_title}}<br> {% endif %}</b>
+            {% if ship_address.address_line1 %} {{ ship_address.address_line1 }},<br>{% endif %}
+            {% if ship_address.address_line2 %}{{ship_address.address_line2}},<br>{% endif %}
+            
+            {% if ship_address.city %} {{ ship_address.city}} - {% endif %} {% if ship_address.pincode %} {{ship_address.pincode}} <br>{% endif %}
+            {%if ship_address.state %} {{ship_address.state}}<br> {% endif %}
+            {% if ship_address.country %} {{ ship_address.country}}<br>{% endif %}
+
+            {% if ship_address.gstin %} GSTIN : {{ship_address.gstin}} <br>{% endif %}
+            {% if doc.contact_person %} 
+            {% set contacts = frappe.get_doc("Contact",doc.contact_person) %}
+            {% if contacts.phone_nos %} Phone : +91{{contacts.phone_nos[0].phone}} {% endif %}
+            {% endif %}
+            {% endif %}
+        </p>
+    </div>
+</div>
+
+
+<div style="width: 100%;float: left;padding-top: 20px;">
+    <table style="width: 100%;">
+        <thead style="background-color: #272829;">
+            <th style="font-size: 13px;color: white;font-weight: 600;">Sales Person</th>
+            <th style="font-size: 13px;color: white;font-weight: 600;">Order Date</th>
+            <th style="font-size: 13px;color: white;font-weight: 600;">Branch Name</th>
+            <th style="font-size: 13px;color: white;font-weight: 600;">Quotation No</th>
+            <th style="font-size: 13px;color: white;font-weight: 600;">Product</th>
+            <th style="font-size: 13px;color: white;font-weight: 600;">Sales Order No</th>
+        </thead>
+        <tr>
+            <td style="font-size: 13px;color: black;">{% if doc.owner %} {% set sales_person = frappe.get_doc('User',doc.owner) %} {{ sales_person.first_name}} {% endif %}</td>
+            <td style="font-size: 13px;color: black;">{% if doc.delivery_date %} {{doc.get_formatted('delivery_date')}} {% endif %}</td>
+            <td style="font-size: 13px;color: black;">
+                {% if doc.company_address %}
+                {% set address=frappe.get_doc('Address',doc.company_address) %}
+                {% if address.city %} {{ address.city}} {% endif %}
+                {% endif %}
+            </td>
+            <td style="font-size: 13px;color: black;">{% if doc.items[0].prevdoc_docname %} {{doc.items[0].prevdoc_docname}} {% endif %} </td>
+            <th style="font-size: 13px;color: black;">Bioman</th>
+            <th style="font-size: 13px;color: black;">{{doc.name}}</th>
+        </tr>
+    </table>
+</div>
+
+<div style="width:100%;">
+    <table style="width:100%;margin-top:30px !important;">
+        <thead style="border-bottom:1px solid lightgray;background-color: #272829;">           
+            
+            <tr>
+                <th style="font-size:13px;text-align:center;font-weight: 600;color:white">#</th>
+                <th style="font-size:13px;text-align:center;font-weight: 600;color:white" colspan="2">Item & Description</th>
+                <th style="font-size:13px;text-align:center;font-weight: 600;color:white">HSN Code</th>
+                <th style="font-size:13px;text-align:center;font-weight: 600;color:white">Qty</th>
+                <th style="font-size:13px;text-align:center;font-weight: 600;color:white">Rate</th>
+               
+                <th style="font-size:13px;text-align:center;font-weight: 600;color:white">Amount ({{doc.currency}})</th>
+            </tr>
+        </thead>
+
+                {% for row in doc.items %}
+                {% set product_details = frappe.get_doc("Item",row.item_code) %}
+                   
+            <tr style="border-bottom:1px solid lightgray;">
+                <td style="font-size: 12px;color:black;">{{ loop.index }}</td>
+                <td style="width: 10%;"><img src="{% if product_details.image %} https://homegenie2023.frappe.cloud/{{product_details.image}} {% endif %}"></td>
+                <td style = "text-align: left;padding:0 5px !important;font-size:12px;color:black;">
+                    <b>{{ product_details.item_name }}</b><br>{% if row.description %} {{row.description}} {% endif %}<br>
+                </td>
+                <td style = "text-align:center;font-size:12px;color:black;">{% if product_details.gst_hsn_code %} {{product_details.gst_hsn_code}} {% endif %}</td>
+                <td style = "text-align:center;font-size:12px;color:black;">{{row.qty}} {{row.uom}}</td>
+                <td style = "text-align:right;font-size:12px;color:black;white-space:nowrap;">{{frappe.utils.fmt_money(row.rate,currency=doc.currency)}}</td>
+               <td style = "text-align:right;font-size:12px;color:black;white-space:nowrap;">
+                {% set amount = row.qty * row.rate %}
+                {{frappe.utils.fmt_money(amount,currency=doc.currency)}}</td>
+            </tr>
+            {% endfor %}
+    </table>
+</div>
+
+{% if doc.other_charges_calculation %}
+<div style="width: 100%;float: left;">
+    {{doc.other_charges_calculation}}
+ </div>
+ {% endif %}
+
+<div style="width: 45%;float:right;">
+    <table style="float:right; width:100% !important;">                
+        <tr>
+            <td style="text-align:right;font-size: 13px;">Sub Total</td>
+            <td style="text-align:right;font-size: 13px;">{{frappe.utils.fmt_money(doc.total,currency=doc.currency)}}</td>
+        </tr>
+        {% if doc.additional_discount_percentage or doc.discount_amount %} 
+        <tr>
+            <td  style="font-size:13px;text-align:right;color: black;">Discounts ({{doc.additional_discount_percentage}}%)</td>
+            <td style="text-align:right;font-size: 13px;color: black;">{{frappe.utils.fmt_money(doc.discount_amount,currency=doc.currency)}}</td>
+        </tr>
+        {% endif %}
+
+        {% if doc.total_taxes_and_charges %}
+        <tr>
+            <td  style="font-size:13px;text-align:right;font-size:13px;color:black;">Total Tax Charges</td>
+            <td style="text-align:right;font-size:13px;color:black;white-space: nowrap;">
+                {{frappe.utils.fmt_money(doc.total_taxes_and_charges,currency=doc.currency)}}
+            </td>
+        </tr>
+        {% endif %}
+        {% if doc.rounding_adjustment %}
+        <tr>
+            <td  style="font-size:13px;text-align:right;">Adjustment</td>
+            <td style="text-align:right;font-size:13px;">  {{frappe.utils.fmt_money(doc.rounding_adjustment,currency=doc.currency)}} </td>
+        </tr>
+        {% endif %} 
+        <tr style="background-color: silver;">
+            <td style="text-align:right;font-size: 13px;font-weight: 600;">Total</td>
+            <td style="text-align:right;font-size: 13px;font-weight: 600;">{{ doc.currency }} {{frappe.utils.fmt_money(doc.rounded_total)}}</td>
+        </tr>
+    </table>
+</div>
+
+<div style="width: 100%;float: left;padding-top:20px;">
+    <p style="font-size: 13px;color: black;"><b>Total In Words</b> : {{frappe.utils.money_in_words(doc.rounded_total)}}</p>
+</div>
+
+{% if doc.terms %}
+	{% set terms_text = doc.terms | replace ('<div class="ql-editor read-mode">','') | replace('</div>','') %}
+		<div style="width:100%;padding-top:65px;padding:0 5px;float: left;">
+		{{ terms_text }}
+    {% endif %}
+
+<div style="width: 100%;float: left;padding-top:10px">
+    <p style="font-size: 14px;color: black;">This is a system generated bill and it does not requires any signature</p>
+</div>
+
+{% endif %}
+
+{% if doc.company == 'Timbe Windows Private Limited' %}
+
+<style>
+    em {
+        font-style: normal;
+        font-size:11px;
+    }
+    .ql-editor {
+        font-size: 9px;
+    }
+    #dates td
+    {
+        font-size:13px;
+        color:black;
+    }
+    #dates
+    {
+        float:right;
+    }
+    li
+    {
+        font-size:10px;
+    }
+    .ql-editor {
+        line-height:12px;
+        font-size:13px;
+    }
+    [document-status] {
+            display:none;
+        }
+    .print-heading {
+        display:none;
+    }
+    .ql-editor p
+    {
+        font-size: 11px;
+        color: black;
+        overflow-y: hidden;
+    }
+    .print-format .table-bordered
+    {
+        border:1px solid black;
+    }
+    .print-format .table-bordered th
+    {
+        border:1px solid black;
+        text-align:center;
+        color:black;
+        font-size:11px;
+        padding:2px !important;
+        font-weight:600;
+    }
+    
+    .print-format .table-bordered td
+    {
+        border:1px solid black;
+        text-align:center;
+        color:black;
+        font-size:11px;
+        padding:2px !important;
+    }
+    </style>
+    
+    <div style="width: 100%;float: left;border-top: 1px solid black;border-right: 1px solid black;border-left: 1px solid black;">
+        <div style="width: 30%;float: left;padding-top: 50px;padding:5px;"><img src="/files/image_2023_08_24T15_11_53_538Z.png""> </div>
+        <div style="width: 68%;float: right;">
+            <p style="font-size: 20px;color:black;font-weight:600;">{{ doc.company }}</p>
+            {% if doc.company_address %}
+            
+            {% set address=frappe.get_doc('Address',doc.company_address) %}
+            {% if address %}
+            <p style="font-size: 13px;color:black;">
+                {% if address.address_line1 %} {{ address.address_line1 }}<br> {% endif %}
+                {% if address.address_line2 %}{{ address.address_line2 }}<br> {% endif %}
+                {% if address.city %} {{ address.city}}, {% endif %} {% if address.state %} {{address.state}}<br> {% endif %}
+                {% if address.pincode %} Pincode :{{address.pincode}}<br> {% endif %}                
+                            
+                {% if address.phone %} Phone : {{address.phone}} {% endif %}
+                <p style="font-size: 13px;color:black;">{% if address.gstin %}GSTIN: {{ address.gstin }} {% endif %}</p>
+            </p>
+            {% endif %}
+            {% endif %}
+        </div>
+    </div>
+
+    <div style="width: 100%;border-bottom: 1px solid gray;color: white;float: left;">
+        <div style="width: 50%; float: left;border-right: 1px solid black;border-top: 1px solid black;background-color: lightgray;border-left: 1px solid black;">
+            <p style="font-size: 13px;color:black;text-align: center;">Billing Address</p>
+        </div>
+        <div style="width: 50%; float: right;border-top: 1px solid black;background-color: lightgray;border-right: 1px solid black;">
+            <p style="font-size: 13px;color:black;text-align: center;">Delivery Address</p>
+        </div>
+    </div>
+    
+    <div style="width: 100%;float: left;border: 1px solid black;">
+        <div style="width: 50%;float: left;border-right: 1px solid black">
+            
+            {% if doc.customer_address %}
+            {% set customer_address = frappe.get_doc('Address',doc.customer_address) %}
+            <p style="font-size: 13px;color:black;padding:5px;">
+                <b>{% if doc.customer_name %} {{doc.customer_name}}<br> {% endif %}</b>
+                {% if customer_address.address_line1 %} {{ customer_address.address_line1 }}<br> {% endif %}
+                {% if customer_address.address_line2 %} {{ customer_address.address_line2 }}<br> {% endif %}
+                {% if customer_address.city %} {{ customer_address.city }} - {% endif %} 
+                {% if customer_address.pincode %} {{customer_address.pincode}}<br> {% endif %}
+                {% if customer_address.state %} {{customer_address.state}} <br>{% endif %}
+                {% if customer_address.country %} {{customer_address.country}} <br>{% endif %}
+                {% if customer_address.gstin %} GSTIN : {{customer_address.gstin}} <br>{% endif %}
+                {% if doc.contact_person %}
+                {% set cont = frappe.get_doc('Contact',doc.contact_person) %}
+                {% if cont.phone_nos %}Phone : +91 {{cont.phone_nos[0].phone}}{% endif %}
+                {% endif %}
+            </p>
+            {% endif %}
+        </div>
+        <div style="width: 50%;float: right;">
+            <p style="font-size:13px;color:black;padding:5px;">
+                {% if doc.shipping_address %}
+                {% set ship_address=frappe.get_doc('Address',doc.shipping_address_name) %}
+                <b>{% if ship_address.address_title %} {{ship_address.address_title}}<br> {% endif %}</b>
+                {% if ship_address.address_line1 %} {{ ship_address.address_line1 }},<br>{% endif %}
+                {% if ship_address.address_line2 %}{{ship_address.address_line2}},<br>{% endif %}
+                
+                {% if ship_address.city %} {{ ship_address.city}} - {% endif %} {% if ship_address.pincode %} {{ship_address.pincode}} <br>{% endif %}
+                {%if ship_address.state %} {{ship_address.state}}<br> {% endif %}
+                {% if ship_address.country %} {{ ship_address.country}}<br>{% endif %}
+    
+                {% if ship_address.gstin %} GSTIN : {{ship_address.gstin}} <br>{% endif %}
+                {% if doc.contact_person %} 
+                {% set contacts = frappe.get_doc("Contact",doc.contact_person) %}
+                {% if contacts.phone_nos %} Phone : +91{{contacts.phone_nos[0].phone}} {% endif %}
+                {% endif %}
+                {% endif %}
+            </p>
+        </div>
+    </div>
+    
+    <div style="width: 100%;float: left;padding-top: 20px;">
+        <table style="width: 100%;">
+            <thead style="background-color: #272829;">
+                <th style="font-size: 13px;color: white;font-weight: 600;">Sales Person</th>
+                <th style="font-size: 13px;color: white;font-weight: 600;">Order Date</th>
+                <th style="font-size: 13px;color: white;font-weight: 600;">Branch Name</th>
+                <th style="font-size: 13px;color: white;font-weight: 600;">Quotation No</th>
+                <th style="font-size: 13px;color: white;font-weight: 600;">Product</th>
+                <th style="font-size: 13px;color: white;font-weight: 600;">Sales Order No</th>
+            </thead>
+            <tr>
+                <td style="font-size: 13px;color: black;">{% if doc.owner %} {% set sales_person = frappe.get_doc('User',doc.owner) %} {{ sales_person.first_name}} {% endif %}</td>
+                <td style="font-size: 13px;color: black;">{% if doc.delivery_date %} {{doc.get_formatted('delivery_date')}} {% endif %}</td>
+                <td style="font-size: 13px;color: black;">
+                    {% if doc.company_address %}
+                    {% set address=frappe.get_doc('Address',doc.company_address) %}
+                    {% if address.city %} {{ address.city}} {% endif %}
+                    {% endif %}
+                </td>
+                <td style="font-size: 13px;color: black;">{% if doc.items[0].prevdoc_docname %} {{doc.items[0].prevdoc_docname}} {% endif %} </td>
+                <th style="font-size: 13px;color: black;">Timbe</th>
+                <th style="font-size: 13px;color: black;">{{doc.name}}</th>
+            </tr>
+        </table>
+    </div>
+    
+    <div style="width:100%;">
+        <table style="width:100%;margin-top:30px !important;">
+            <thead style="border-bottom:1px solid lightgray;background-color: #272829;">           
+                
+                <tr>
+                    <th style="font-size:13px;text-align:center;font-weight: 600;color:white">#</th>
+                    <th style="font-size:13px;text-align:center;font-weight: 600;color:white" colspan="2">Item & Description</th>
+                    <th style="font-size:13px;text-align:center;font-weight: 600;color:white">HSN Code</th>
+                    <th style="font-size:13px;text-align:center;font-weight: 600;color:white">Qty</th>
+                    <th style="font-size:13px;text-align:center;font-weight: 600;color:white">Rate</th>
+                   
+                    <th style="font-size:13px;text-align:center;font-weight: 600;color:white">Amount ({{doc.currency}})</th>
+                </tr>
+            </thead>
+    
+                    {% for row in doc.items %}
+                    {% set product_details = frappe.get_doc("Item",row.item_code) %}
+                       
+                <tr style="border-bottom:1px solid lightgray;">
+                    <td style="font-size: 12px;color:black;">{{ loop.index }}</td>
+                    <td style="width: 10%;"><img src="{% if product_details.image %} https://homegenie2023.frappe.cloud/{{product_details.image}} {% endif %}"></td>
+                    <td style = "text-align: left;padding:0 5px !important;font-size:12px;color:black;">
+                        <b>{{ product_details.item_name }}</b><br>{% if row.description %} {{row.description}} {% endif %}<br>
+                    </td>
+                    <td style = "text-align:center;font-size:12px;color:black;">{% if product_details.gst_hsn_code %} {{product_details.gst_hsn_code}} {% endif %}</td>
+                    <td style = "text-align:center;font-size:12px;color:black;">{{row.qty}} {{row.uom}}</td>
+                    <td style = "text-align:right;font-size:12px;color:black;white-space:nowrap;">{{frappe.utils.fmt_money(row.rate,currency=doc.currency)}}</td>
+                   <td style = "text-align:right;font-size:12px;color:black;white-space:nowrap;">
+                    {% set amount = row.qty * row.rate %}
+                    {{frappe.utils.fmt_money(amount,currency=doc.currency)}}</td>
+                </tr>
+                {% endfor %}
+        </table>
+    </div>
+    
+    {% if doc.other_charges_calculation %}
+<div style="width: 100%;float: left;">
+    {{doc.other_charges_calculation}}
+ </div>
+ {% endif %}
+    
+    <div style="width: 45%;float:right;">
+        <table style="float:right; width:100% !important;">                
+            <tr>
+                <td style="text-align:right;font-size: 13px;">Sub Total</td>
+                <td style="text-align:right;font-size: 13px;">{{frappe.utils.fmt_money(doc.total,currency=doc.currency)}}</td>
+            </tr>
+            {% if doc.additional_discount_percentage or doc.discount_amount %} 
+            <tr>
+                <td  style="font-size:13px;text-align:right;color: black;">Discounts ({{doc.additional_discount_percentage}}%)</td>
+                <td style="text-align:right;font-size: 13px;color: black;">{{frappe.utils.fmt_money(doc.discount_amount,currency=doc.currency)}}</td>
+            </tr>
+            {% endif %}
+    
+            {% if doc.total_taxes_and_charges %}
+            <tr>
+                <td  style="font-size:13px;text-align:right;font-size:13px;color:black;">Total Tax Charges</td>
+                <td style="text-align:right;font-size:13px;color:black;white-space: nowrap;">
+                    {{frappe.utils.fmt_money(doc.total_taxes_and_charges,currency=doc.currency)}}
+                </td>
+            </tr>
+            {% endif %}
+            {% if doc.rounding_adjustment %}
+            <tr>
+                <td  style="font-size:13px;text-align:right;">Adjustment</td>
+                <td style="text-align:right;font-size:13px;">  {{frappe.utils.fmt_money(doc.rounding_adjustment,currency=doc.currency)}} </td>
+            </tr>
+            {% endif %} 
+            <tr style="background-color: silver;">
+                <td style="text-align:right;font-size: 13px;font-weight: 600;">Total</td>
+                <td style="text-align:right;font-size: 13px;font-weight: 600;">{{ doc.currency }} {{frappe.utils.fmt_money(doc.rounded_total)}}</td>
+            </tr>
+        </table>
+    </div>
+    
+    <div style="width: 100%;float: left;padding-top:20px;">
+        <p style="font-size: 13px;color: black;"><b>Total In Words</b> : {{frappe.utils.money_in_words(doc.rounded_total)}}</p>
+    </div>
+    
+    {% if doc.terms %}
+        {% set terms_text = doc.terms | replace ('<div class="ql-editor read-mode">','') | replace('</div>','') %}
+            <div style="width:100%;padding-top:65px;padding:0 5px;float: left;">
+            {{ terms_text }}
+        {% endif %}
+    
+    <div style="width: 100%;float: left;padding-top:10px">
+        <p style="font-size: 14px;color: black;">This is a system generated bill and it does not requires any signature</p>
+    </div>
+
+{% endif %}
+
+
+{% if doc.company == 'Colorhomes Developers Private Limited' %}
+
+<style>
+    em {
+        font-style: normal;
+        font-size:11px;
+    }
+    .ql-editor {
+        font-size: 9px;
+    }
+    #dates td
+    {
+        font-size:13px;
+        color:black;
+    }
+    #dates
+    {
+        float:right;
+    }
+    li
+    {
+        font-size:10px;
+    }
+    .ql-editor {
+        line-height:12px;
+        font-size:13px;
+    }
+    [document-status] {
+            display:none;
+        }
+    .print-heading {
+        display:none;
+    }
+    .ql-editor p
+    {
+        font-size: 11px;
+        color: black;
+        overflow-y: hidden;
+    }
+    .print-format .table-bordered
+    {
+        border:1px solid black;
+    }
+    .print-format .table-bordered th
+    {
+        border:1px solid black;
+        text-align:center;
+        color:black;
+        font-size:11px;
+        padding:2px !important;
+        font-weight:600;
+    }
+    
+    .print-format .table-bordered td
+    {
+        border:1px solid black;
+        text-align:center;
+        color:black;
+        font-size:11px;
+        padding:2px !important;
+    }
+    </style>
+    
+    <div style="width: 100%;float: left;border-top: 1px solid black;border-right: 1px solid black;border-left: 1px solid black;">
+        <div style="width: 30%;float: left;padding-top: 50px;padding:5px;"><img src="/files/colorhomes logo.jpeg"> </div>
+        <div style="width: 68%;float: right;">
+            <p style="font-size: 20px;color:black;font-weight:600;">{{ doc.company }}</p>
+            {% if doc.company_address %}
+            
+            {% set address=frappe.get_doc('Address',doc.company_address) %}
+            {% if address %}
+            <p style="font-size: 13px;color:black;">
+                {% if address.address_line1 %} {{ address.address_line1 }}<br> {% endif %}
+                {% if address.address_line2 %}{{ address.address_line2 }}<br> {% endif %}
+                {% if address.city %} {{ address.city}}, {% endif %} {% if address.state %} {{address.state}}<br> {% endif %}
+                {% if address.pincode %} Pincode :{{address.pincode}}<br> {% endif %}                
+                            
+                {% if address.phone %} Phone : {{address.phone}} {% endif %}
+                <p style="font-size: 13px;color:black;">{% if address.gstin %}GSTIN: {{ address.gstin }} {% endif %}</p>
+            </p>
+            {% endif %}
+            {% endif %}
+        </div>
+    </div>
+
+    <div style="width: 100%;border-bottom: 1px solid gray;color: white;float: left;">
+        <div style="width: 50%; float: left;border-right: 1px solid black;border-top: 1px solid black;background-color: lightgray;border-left: 1px solid black;">
+            <p style="font-size: 13px;color:black;text-align: center;">Billing Address</p>
+        </div>
+        <div style="width: 50%; float: right;border-top: 1px solid black;background-color: lightgray;border-right: 1px solid black;">
+            <p style="font-size: 13px;color:black;text-align: center;">Delivery Address</p>
+        </div>
+    </div>
+    
+    <div style="width: 100%;float: left;border: 1px solid black;">
+        <div style="width: 50%;float: left;border-right: 1px solid black">
+            
+            {% if doc.customer_address %}
+            {% set customer_address = frappe.get_doc('Address',doc.customer_address) %}
+            <p style="font-size: 13px;color:black;padding:5px;">
+                <b>{% if doc.customer_name %} {{doc.customer_name}}<br> {% endif %}</b>
+                {% if customer_address.address_line1 %} {{ customer_address.address_line1 }}<br> {% endif %}
+                {% if customer_address.address_line2 %} {{ customer_address.address_line2 }}<br> {% endif %}
+                {% if customer_address.city %} {{ customer_address.city }} - {% endif %} 
+                {% if customer_address.pincode %} {{customer_address.pincode}}<br> {% endif %}
+                {% if customer_address.state %} {{customer_address.state}} <br>{% endif %}
+                {% if customer_address.country %} {{customer_address.country}} <br>{% endif %}
+                {% if customer_address.gstin %} GSTIN : {{customer_address.gstin}} <br>{% endif %}
+                {% if doc.contact_person %}
+                {% set cont = frappe.get_doc('Contact',doc.contact_person) %}
+                {% if cont.phone_nos %}Phone : +91 {{cont.phone_nos[0].phone}}{% endif %}
+                {% endif %}
+            </p>
+            {% endif %}
+        </div>
+        <div style="width: 50%;float: right;">
+            <p style="font-size:13px;color:black;padding:5px;">
+                {% if doc.shipping_address %}
+                {% set ship_address=frappe.get_doc('Address',doc.shipping_address_name) %}
+                <b>{% if ship_address.address_title %} {{ship_address.address_title}}<br> {% endif %}</b>
+                {% if ship_address.address_line1 %} {{ ship_address.address_line1 }},<br>{% endif %}
+                {% if ship_address.address_line2 %}{{ship_address.address_line2}},<br>{% endif %}
+                
+                {% if ship_address.city %} {{ ship_address.city}} - {% endif %} {% if ship_address.pincode %} {{ship_address.pincode}} <br>{% endif %}
+                {%if ship_address.state %} {{ship_address.state}}<br> {% endif %}
+                {% if ship_address.country %} {{ ship_address.country}}<br>{% endif %}
+    
+                {% if ship_address.gstin %} GSTIN : {{ship_address.gstin}} <br>{% endif %}
+                {% if doc.contact_person %} 
+                {% set contacts = frappe.get_doc("Contact",doc.contact_person) %}
+                {% if contacts.phone_nos %} Phone : +91{{contacts.phone_nos[0].phone}} {% endif %}
+                {% endif %}
+                {% endif %}
+            </p>
+        </div>
+    </div>
+    
+    <div style="width: 100%;float: left;padding-top: 20px;">
+        <table style="width: 100%;">
+            <thead style="background-color: #272829;">
+                <th style="font-size: 13px;color: white;font-weight: 600;">Sales Person</th>
+                <th style="font-size: 13px;color: white;font-weight: 600;">Order Date</th>
+                <th style="font-size: 13px;color: white;font-weight: 600;">Branch Name</th>
+                <th style="font-size: 13px;color: white;font-weight: 600;">Quotation No</th>
+                <th style="font-size: 13px;color: white;font-weight: 600;">Product</th>
+                <th style="font-size: 13px;color: white;font-weight: 600;">Sales Order No</th>
+            </thead>
+            <tr>
+                <td style="font-size: 13px;color: black;">{% if doc.owner %} {% set sales_person = frappe.get_doc('User',doc.owner) %} {{ sales_person.first_name}} {% endif %}</td>
+                <td style="font-size: 13px;color: black;">{% if doc.delivery_date %} {{doc.get_formatted('delivery_date')}} {% endif %}</td>
+                <td style="font-size: 13px;color: black;">
+                    {% if doc.company_address %}
+                    {% set address=frappe.get_doc('Address',doc.company_address) %}
+                    {% if address.city %} {{ address.city}} {% endif %}
+                    {% endif %}
+                </td>
+                <td style="font-size: 13px;color: black;">{% if doc.items[0].prevdoc_docname %} {{doc.items[0].prevdoc_docname}} {% endif %} </td>
+                <th style="font-size: 13px;color: black;">Timbe</th>
+                <th style="font-size: 13px;color: black;">{{doc.name}}</th>
+            </tr>
+        </table>
+    </div>
+    
+    <div style="width:100%;">
+        <table style="width:100%;margin-top:30px !important;">
+            <thead style="border-bottom:1px solid lightgray;background-color: #272829;">           
+                
+                <tr>
+                    <th style="font-size:13px;text-align:center;font-weight: 600;color:white">#</th>
+                    <th style="font-size:13px;text-align:center;font-weight: 600;color:white" colspan="2">Item & Description</th>
+                    <th style="font-size:13px;text-align:center;font-weight: 600;color:white">HSN Code</th>
+                    <th style="font-size:13px;text-align:center;font-weight: 600;color:white">Qty</th>
+                    <th style="font-size:13px;text-align:center;font-weight: 600;color:white">Rate</th>
+                   
+                    <th style="font-size:13px;text-align:center;font-weight: 600;color:white">Amount ({{doc.currency}})</th>
+                </tr>
+            </thead>
+    
+                    {% for row in doc.items %}
+                    {% set product_details = frappe.get_doc("Item",row.item_code) %}
+                       
+                <tr style="border-bottom:1px solid lightgray;">
+                    <td style="font-size: 12px;color:black;">{{ loop.index }}</td>
+                    <td style="width: 10%;"><img src="{% if product_details.image %} https://homegenie2023.frappe.cloud/{{product_details.image}} {% endif %}"></td>
+                    <td style = "text-align: left;padding:0 5px !important;font-size:12px;color:black;">
+                        <b>{{ product_details.item_name }}</b><br>{% if row.description %} {{row.description}} {% endif %}<br>
+                    </td>
+                    <td style = "text-align:center;font-size:12px;color:black;">{% if product_details.gst_hsn_code %} {{product_details.gst_hsn_code}} {% endif %}</td>
+                    <td style = "text-align:center;font-size:12px;color:black;">{{row.qty}} {{row.uom}}</td>
+                    <td style = "text-align:right;font-size:12px;color:black;white-space:nowrap;">{{frappe.utils.fmt_money(row.rate,currency=doc.currency)}}</td>
+                   <td style = "text-align:right;font-size:12px;color:black;white-space:nowrap;">
+                    {% set amount = row.qty * row.rate %}
+                    {{frappe.utils.fmt_money(amount,currency=doc.currency)}}</td>
+                </tr>
+                {% endfor %}
+        </table>
+    </div>
+    
+    {% if doc.other_charges_calculation %}
+<div style="width: 100%;float: left;">
+    {{doc.other_charges_calculation}}
+ </div>
+ {% endif %}
+    
+    <div style="width: 45%;float:right;">
+        <table style="float:right; width:100% !important;">                
+            <tr>
+                <td style="text-align:right;font-size: 13px;">Sub Total</td>
+                <td style="text-align:right;font-size: 13px;">{{frappe.utils.fmt_money(doc.total,currency=doc.currency)}}</td>
+            </tr>
+            {% if doc.additional_discount_percentage or doc.discount_amount %} 
+            <tr>
+                <td  style="font-size:13px;text-align:right;color: black;">Discounts ({{doc.additional_discount_percentage}}%)</td>
+                <td style="text-align:right;font-size: 13px;color: black;">{{frappe.utils.fmt_money(doc.discount_amount,currency=doc.currency)}}</td>
+            </tr>
+            {% endif %}
+    
+            {% if doc.total_taxes_and_charges %}
+            <tr>
+                <td  style="font-size:13px;text-align:right;font-size:13px;color:black;">Total Tax Charges</td>
+                <td style="text-align:right;font-size:13px;color:black;white-space: nowrap;">
+                    {{frappe.utils.fmt_money(doc.total_taxes_and_charges,currency=doc.currency)}}
+                </td>
+            </tr>
+            {% endif %}
+            {% if doc.rounding_adjustment %}
+            <tr>
+                <td  style="font-size:13px;text-align:right;">Adjustment</td>
+                <td style="text-align:right;font-size:13px;">  {{frappe.utils.fmt_money(doc.rounding_adjustment,currency=doc.currency)}} </td>
+            </tr>
+            {% endif %} 
+            <tr style="background-color: silver;">
+                <td style="text-align:right;font-size: 13px;font-weight: 600;">Total</td>
+                <td style="text-align:right;font-size: 13px;font-weight: 600;">{{ doc.currency }} {{frappe.utils.fmt_money(doc.rounded_total)}}</td>
+            </tr>
+        </table>
+    </div>
+    
+    <div style="width: 100%;float: left;padding-top:20px;">
+        <p style="font-size: 13px;color: black;"><b>Total In Words</b> : {{frappe.utils.money_in_words(doc.rounded_total)}}</p>
+    </div>
+    
+    {% if doc.terms %}
+        {% set terms_text = doc.terms | replace ('<div class="ql-editor read-mode">','') | replace('</div>','') %}
+            <div style="width:100%;padding-top:65px;padding:0 5px;float: left;">
+            {{ terms_text }}
+        {% endif %}
+    
+    <div style="width: 100%;float: left;padding-top:10px">
+        <p style="font-size: 14px;color: black;">This is a system generated bill and it does not requires any signature</p>
+    </div>
+
+{% endif %}

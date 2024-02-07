@@ -1,0 +1,322 @@
+<style>
+	.top
+	{
+		text-align: center;
+		font-size: 15px;
+		font-weight: 600;
+		color: black;
+	}
+	.header
+	{
+		border:1px solid black !important;
+		width:100%;
+		float:left;
+	}
+
+	.fdiv
+	{
+		width:50%;
+		float:left;
+	}
+
+	.fdiv p 
+	{
+		font-size:13px;
+		color:black;
+	}
+	.sdiv
+	{
+		width:50%;
+		float:right;
+	}
+	.fp
+	{
+		border-bottom: 1px solid black;
+		padding: 0 5px;
+		font-size: 13px;
+		color: black;
+		/*border-right: 1px solid black;*/
+	}
+	.sp
+	{
+		/*border-bottom: 1px solid black;*/
+		padding: 0 5px;
+		font-size: 13px;
+		color: black;
+		/*border-right: 1px solid black;*/
+	}
+	.tbl1
+	{
+		width:100%;
+	}
+	.tbl1 tr
+	{
+		border-bottom:1px solid black;
+	}
+	.tbl1 td
+	{
+		font-size:13px;
+		color:black;
+	}
+	.tbl2
+	{
+		width:100%;
+		border-bottom:1px solid black;
+	}
+	.tbl2 th
+	{
+		font-size:13px;
+		border:1px solid black;
+		border-top:none;
+		text-align:center;
+		color:black;
+	}
+	.tbl2 td
+	{
+		font-size:13px;
+		border-right:1px solid black;
+		color:black;
+	}
+	.tbl4
+	{
+		width:100%;
+	}
+
+	.tbl4 th
+	{
+		font-size:13px;
+		color:black;
+		text-align:center;
+	}
+	#td
+	{
+		padding:0px !important;
+	}
+</style>
+
+
+{% set month = ['January', 'February', 'March', 'April', 'May', 'June', 'July',  'August', 'September', 'October', 'November', 'December'] %}
+{% set date_ = doc.posting_date | str %}
+{% set month_int = date_.split("-")[1] | int %}
+<div id="header">
+    <img src="/files/sansel-header.JPEG">
+</div>
+<p class='top'>{% if doc.docstatus == 0 %} Draft {% else %} TAX INVOICE {% endif %}</p>
+<div class="header">
+	<div class="fdiv" style="border-right: 1px solid black;">
+		<p style="" class='fp'>
+			<b>Sansel Instruments and Controls-2023-24</b><br>
+			No.1/46,Ganga Nagar,M.M.D.A Colony<br>
+			Maduravoyal,Chennai-600095,Tamilnadu<br>
+			GSTIN/UIN: 33APGPS4066M1ZG<br>
+			State Name : Tamil Nadu, Code : 33<br>
+			E-Mail : enquiry@sansel.net,info@sansel.net
+		</p>
+		<p class="sp" style="height: 130px">
+			<b>Bill To</b> <br>
+			{% if doc.customer_address %}
+			{% set _address = frappe.get_doc('Address',doc.customer_address)%}
+			{% if doc.customer_address and _address %}
+			{% if _address.address_title %} {{ _address.address_title }} {% endif %}<br>
+			{% if _address.address_line1 %} {{ _address.address_line1 }} {% endif %}<br>
+			{% if _address.address_line2 %} {{ _address.address_line2 }} {% endif %}<br>
+			{% if _address.city %} {{ _address.city }} {% endif %}<br>
+			GSTIN/UIN  :  {% if _address.gstin %} {{ _address.gstin }}{% endif %}<br>
+			State Name  : {% if _address.state %} {{ _address.state }} {% endif %},
+			Code : {% if _address.gst_state_number %} {{ _address.gst_state_number }}{% endif %}<br>
+			Contact person  : {% if doc.contact_person %}
+                            {% set contacts = frappe.get_doc("Contact",doc.contact_person) %}
+                                {% if contacts.first_name %}
+                                    {{contacts.first_name}}
+                                {% endif %}
+                         {% endif %}
+			
+			{% endif %}
+			{% endif %}
+		</p><br>
+        <p style="font-size:13px;color: black;padding:5px;height: 177px;">
+            <b>Ship To</b><br>
+            {% if doc.shipping_address_name %} 
+            {% set ship_add = frappe.get_doc('Address',doc.shipping_address_name) %}
+            {{doc.shipping_address_name}} <br>
+            {% if ship_add.address_line1 %} {{ship_add.address_line1}} <br>{% endif %}
+            {% if ship_add.address_line2 %} {{ship_add.address_line2}} <br>{% endif %}
+            {% if ship_add.city %} {{ship_add.city}}<br> {% endif %}
+
+            GSTIN/UIN  :  {% if ship_add.gstin %} {{ ship_add.gstin }}<br>{% endif %}
+			State Name  : {% if ship_add.state %} {{ ship_add.state }}<br> {% endif %}
+			Code : {% if ship_add.gst_state_number %} {{ ship_add.gst_state_number }}<br>{% endif %}
+			Contact person  : {% if doc.contact_person %}
+                            {% set contacts = frappe.get_doc("Contact",doc.contact_person) %}
+                                {% if contacts.first_name %}
+                                    {{contacts.first_name}}
+                                {% endif %}
+                         {% endif %}
+			
+			{% endif %}
+        </p>
+	</div>
+	<div class="sdiv">
+		<table class="tbl1">
+			<tr>
+				<td style="border-right:1px solid black;">Invoice No. {% if doc.name %} {{ doc.name }} {% endif %}</td>
+				<td>Dated : {% if doc.posting_date %} {{date_.split("-")[2]}} {{ month[month_int-1] }} {{ date_.split("-")[0] }} {% endif %}</td>
+				
+			</tr>
+			<tr>
+			    <td style="border-right:1px solid black;">Delivery Note:</td>
+				<td>Mode/Terms of Payment : {% if doc.payment_terms_template %} {{ doc.doc.payment_terms_template }} {% endif %}</td>
+			</tr>
+			<tr>
+			    <td style="border-right:1px solid black;">Supplier’s Ref.</td>
+				<td>Other Reference(s) : {% if doc.remarks %}{{ doc.remarks }}{% endif %}</td>
+			</tr>
+			<tr>
+				<td style="border-right:1px solid black;">Buyer’s Order No.</td>
+				<td>Dated : {% if doc.posting_date %} {{date_.split("-")[2]}} {{ month[month_int-1] }} {{ date_.split("-")[0] }} {% endif %}</td>
+			</tr>
+			<tr>
+				<td style="border-right:1px solid black;">Despatch Document No.</td>
+				<td>Delivery Note Date :</td>
+			</tr>
+			<tr>
+				<td style="border-right:1px solid black;">Despatched through</td>
+				<td >Destination :</td>
+			</tr>
+			<tr style="border-bottom:none;"><td>Terms of Delivery</td></tr>
+		</table>
+	</div>
+</div>
+
+<table class="tbl2">
+	{% set tax_category = {"in_state":0} %}
+        {% if doc.taxes_and_charges %}
+            {% if "Output GST In-state" in doc.taxes_and_charges %}
+                {% set _ = tax_category.update({"in_state":1} ) %}
+                {% set _ = tax_category.update({"in_state":1} ) %}
+            {% else %}
+                {% set _ = tax_category.update({"in_state":0} ) %}
+        {% endif %}
+     {% endif %}
+    <tr>
+        <th>S.No</th>
+        <th>Description of Goods</th>
+        <th>HSN/SAC Code</th>
+        <th>Quantity</th>
+        <th>Rate</th>
+        <th>Per</th>
+        <th>Discount(%)</th>
+        <th>Amount</th>
+    </tr>
+    {% set total_tax = {"cgstt": 0, "sgstt": 0, "igstt": 0} %}
+        {% set tax_type = {"is_incl_tax": 0} %}
+        {% set sales_taxes = frappe.db.get_all("Sales Taxes and Charges", filters={"parent": doc.name, "tax_amount": (">", 0)}, fields=['included_in_print_rate']) %}
+        {% if sales_taxes %}
+            {% if sales_taxes[0].included_in_print_rate == 1 %}
+                {% set _ = tax_type.update({"is_incl_tax": 1}) %}
+            {% endif %}
+        {% endif %}
+        {% for row in doc.items %}
+            {% set product_details = frappe.get_doc("Item", row.item_code) %}
+            {% set taxes = {"cgst": 0, "sgst": 0, "igst": 0} %}
+            
+            {% set row_tax_amount = {"tax_amount": 0} %}
+        
+        
+            {% if row.item_tax_rate != '{}' %}
+                {% for i in json.loads(row.item_tax_rate) %}
+                    {% if "CGST" in i %}
+                        {% set _ = taxes.update({"cgst": json.loads(row.item_tax_rate)[i]}) %}
+                        
+                    {% elif "SGST" in i %}
+                        {% set _ = taxes.update({"sgst": json.loads(row.item_tax_rate)[i]}) %}
+                        
+                    {% else %}
+                        {% set _ = taxes.update({"igst": json.loads(row.item_tax_rate)[i]}) %}
+                    {% endif %}
+                {% endfor %}
+            {% else %}
+                {% if doc.taxes_and_charges %}
+                    {% if tax_category.in_state == 0 %}
+                        {% set _ = taxes.update({"igst": doc.taxes[0].rate}) %}
+                        
+                    {% else %}
+                        {% set _ = taxes.update({"cgst": doc.taxes[0].rate}) %}
+                        {% set _ = taxes.update({"sgst": doc.taxes[1].rate}) %}
+                        
+                    {% endif %}
+                {% endif %}
+            {% endif %}
+
+            <tr>
+            	<td style="border-left:1px solid black;">{{ loop.index }}</td>
+            	<td style="text-align:left;font-weight:600;">{{ product_details.item_name }}</td>
+            	<td style = "text-align:right;">{% if row.gst_hsn_code %} {{row.gst_hsn_code}} {% endif %}</td>
+	            <td style = "text-align:right;font-weight:600;">{{"%.0f"|format(row.qty)}} {{row.uom}}</td>
+	            <td style = "text-align:right;">{{frappe.utils.fmt_money(row.rate)}}</td>
+	            <td style = "text-align:right;">{{row.uom}}</td>
+	            <td></td>
+            	<td style = "text-align:right;font-weight:600;">{{frappe.utils.fmt_money(row.net_amount)}}</td>
+            </tr>
+            {% endfor %}
+</table>
+
+<table style="width: 100%;border-bottom:1px solid black !important;">
+	<tr style="border-right: 1px solid black;">
+		<td style="width: 50%;float:left;font-size: 13px;color:black;border-left: 1px solid black;">Amount Chargeable (in words)<br><span style="font-weight: 600;font-size:15px;">{{frappe.utils.money_in_words(doc.grand_total)}}</span></td>
+		<td style="width: 50%;float:right;font-size: 13px;color:black;text-align:end;">E. & O.E</td>
+	</tr>
+</table>
+<table style="width: 100%;border-top:0;">
+	<tr style="border-top:0;">
+		<td colspan="4" style="border:1px solid black;font-size: 13px;color:black;width: 50%;text-align: right;border-top:0;">Sub Total</td>
+		<td colspan="4" style="border:1px solid black;font-size: 13px;color:black;width: 10%;text-align: right;border-top:0;">{{frappe.utils.fmt_money(doc.total,currency=doc.currency)}}</td>
+	</tr>
+	{% if doc.taxes_and_charges %}
+	{% for tax in doc.taxes %}
+	{% if tax.charge_type in ["Actual", "On Net Total"] %}
+	<tr>
+		<td colspan="4" style="border:1px solid black;font-size: 13px;color:black;width: 50%;text-align: right;">{{tax.account_head.split(" - ")[0]}}</td>
+		<td colspan="4" style="border:1px solid black;font-size: 13px;color:black;width: 10%;text-align: right;">
+			{{frappe.utils.fmt_money(tax.base_tax_amount,currency=doc.currency)}}
+		</td>
+	</tr>
+	{% endif %}
+	{% endfor %}
+	{% endif %}
+	<tr>
+		<td colspan="4" style="border:1px solid black;font-size: 13px;color:black;width: 50%;text-align: right;">Total</td>
+		<td colspan="4" style="border:1px solid black;font-size: 13px;color:black;width: 10%;text-align: right;">{{frappe.utils.fmt_money(doc.grand_total,currency=doc.currency)}}</td>
+	</tr>
+</table>
+
+<div style="width: 100%;border:1px solid black;border-bottom:1px solid black;border-top:none;">
+	<div style="width: 50%;float: left;padding: 0 5px;">
+		<p>Tax Amount(in words) : {{ frappe.utils.money_in_words(doc.total_taxes_and_charges, doc.currency)}}</p>
+		<p>Company's PAN : {% set pan = frappe.get_doc("Company", doc.company) %}{% if pan %}{{pan.pan}}{% endif %}</p>
+		<p>Declaration : <br>
+			We declare that this invoice shows the actual price of the
+			goods described and that all particulars are true and correct.
+		</p>
+	</div>
+	<div style="width: 50%;float: right;padding: 0 5px;border-left: 1px solid black;">
+		<p>Company Bank Details</p>
+        {% set bank_account = frappe.get_doc('Bank Account',doc.account_name)%}
+
+        {% if bank_account %}
+        <p>{% if bank_account.account_name %} Bank Account Name : {{bank_account.account_name}} {% endif %}</p>
+        <p>{% if bank_account.bank %} Bank Name : {{bank_account.bank}} {% endif %}</p>
+        <p>{% if bank_account.bank_account_no %} Account Number : {{bank_account.bank_account_no}} {% endif %}</p>
+        <p>{% if bank_account.custom_ifsc_code %} IFSC Code : {{bank_account.custom_ifsc_code}} {% endif %} </p>
+        <p>{% if bank_account.branch_code %} Branch Code : {{bank_account.branch_code}} {% endif %}</p>
+        {% endif %}
+
+		<div style="border:1px solid black;width: 95%;">
+			<p style="text-align:end;padding-right: 5px;">for Sansel Instruments and Controls-2023-24</p>
+			<p style="padding-top: 25px;padding-right: 5px;text-align:end;">Authorised Signatory</p>
+		</div><br>
+	</div>
+</div>
+<div id="footer" style="border:1px solid black;border-top:none;padding:2px !important;">
+    <img src="/files/sansel-footer.jpg">
+</div>

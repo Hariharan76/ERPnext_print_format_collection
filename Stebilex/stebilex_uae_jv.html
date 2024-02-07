@@ -1,0 +1,65 @@
+<div style="width: 100%;float: right;">
+    <p style="font-size: 20px;color: black;font-weight: 600;text-align: end;">JOURNAL</p>
+    <p style="font-size: 20px;color: black;text-align: end;">#{{doc.name}}</p>
+</div>
+{% set currency = frappe.get_doc('Company',doc.company) %}
+<div style="width: 100%;float: left;padding-top: 10px;">
+    <div style="width: 50%;float: left;">
+        <p style="font-size: 13px;color: black;text-align: left;">Notes</p>
+        <p style="font-size: 13px;color: black;text-align: left;">{% if doc.remark %} {{doc.remark}} {% endif %}</p>
+    </div>
+    <div style="width: 50%;float: right;">
+        <table style="width: 80%;float: right;">
+            <tr>
+                <td style="font-size: 13px;color: black;">Date</td> 
+                <td style="font-size: 13px;color: black;">:</td>
+                <td style="font-size: 13px;color: black;">{{doc.get_formatted('posting_date')}}</td>
+            </tr>
+            <tr>
+                <td style="font-size: 13px;color: black;">Amount</td>
+                <td style="font-size: 13px;color: black;">:</td>
+                <td style="font-size: 13px;color: black;">{{doc.total_debit}}</td>
+            </tr>
+            <tr>
+                <td style="font-size: 13px;color: black;">Reference Number</td> 
+                <td style="font-size: 13px;color: black;">:</td>
+                <td style="font-size: 13px;color: black;">{% if doc.cheque_no %}{{doc.cheque_no}} {% endif %}</td>
+            </tr>
+        </table>
+    </div>
+</div>
+
+<div style="width: 100%;float: left;padding-top: 20px;">
+    <table style="width: 100%;">
+        <thead style="background-color: #464650;border: 1px solid black;">
+            <th style="font-size: 13px;color: white;text-align: left;" colspan="1">Account</th>
+            <th style="font-size: 13px;color: white;text-align: center;width:20%;" colspan="1">Contact</th>
+            <th style="font-size: 13px;color: white;text-align: right;" colspan="1">Debits</th>
+            <th style="font-size: 13px;color: white;text-align: center;" colspan="1">Credits</th>
+        </thead>
+        {% for data in doc.accounts %}
+        <tr style="border-bottom: 1px solid lightgray;">
+            <td style="font-size: 13px;color: black;text-align: left;padding-bottom:0px !important;">{% if data.account %} {{data.account}} {% endif %}
+                <div style="font-size:12px;color:gray;padding-top:5px;">
+                    <p style="font-size:13px;color:black;color:gray;">{% if data.user_remark %} {{data.user_remark}} {% endif %}</p>
+                </div>
+            </td>
+            <td style="font-size: 13px;color: black;text-align: left;"></td>
+            <td style="font-size: 13px;color: black;text-align:right;">{% if data.debit %} {{frappe.utils.fmt_money(data.debit,currency=doc.currency)}} {% endif %}</td>
+            <td style="font-size: 13px;color: black;text-align:right;">{% if data.credit %} {{frappe.utils.fmt_money(data.credit,currency=doc.currency)}} {% endif %}</td>
+        </tr>
+        {% endfor %}
+        <tr>
+            <td style="font-size: 13px;color: black;text-align:center;"></td>
+            <td style="font-size: 13px;color: black;text-align:center;">Sub Total</td>
+            <td style="font-size: 13px;color: black;text-align:right;">{{frappe.utils.fmt_money(doc.total_debit,currency=doc.currency)}}</td>
+            <td style="font-size: 13px;color: black;text-align:right;">{{frappe.utils.fmt_money(doc.total_credit,currency=doc.currency)}}</td>
+        </tr>
+        <tr style="border: 1px solid lightgray;background-color: lightgray;">
+            <td style="font-size: 13px;color: black;text-align:center;"></td>
+            <td style="font-size: 13px;color: black;text-align:center;">Total</td>
+            <td style="font-size: 13px;color: black;text-align:right;white-space: nowrap;">{{currency.default_currency}} {{doc.total_debit}}</td>
+            <td style="font-size: 13px;color: black;text-align:right;white-space: nowrap;">{{currency.default_currency}} {{doc.total_credit}}</td>
+        </tr>
+    </table>
+</div>

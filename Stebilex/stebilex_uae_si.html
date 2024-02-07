@@ -1,0 +1,377 @@
+<style>
+    /* td, th, tr {
+        page-break-inside:auto;
+    } */
+    .tbl1 td{
+    font-size: 13px;
+    color: black;
+    line-height: 4px;
+    }
+    #td2
+    {
+        float: right;
+        text-align: right;
+        font-size: 13px;
+        color: black;
+    }
+    em {
+        font-style: normal;
+        font-size:11px;
+    }
+    .ql-editor * {
+        font-size: 12px;
+        font-weight:normal;
+    }
+    .ql-editor p {
+        font-size: 10px;
+        font-weight:normal;
+        line-height: 13px !important;
+    }
+    .ql-editor>* {
+        font-size: 12px;
+        font-weight:normal;
+    }
+    [document-status] {
+        display:none;
+    }
+    .print-heading {
+        display:none;
+    }
+    .ql-editor p
+    {
+        font: size 12px;
+        color:black;
+        padding:0 5px !important;
+        overflow-y: hidden;
+    }
+</style>
+
+<div style="width: 100%;">
+    <div style="width: 50%;float: left;">
+        <img alt="Stebilex" src="/files/Stebilex uae.png" style="width: 100% !important;">
+    </div>
+    <div style="width: 50%;float: right;">
+        <p style="font-size: 15px;color: black;text-align: end;font-weight: 600;">TAX INVOICE</p>
+        <p style="font-size: 15px;color: black;text-align: end;font-weight: 600;"># {{doc.name}}</p>
+        <p style="font-size: 15px;color: black;text-align: end;font-weight: 600;">{% if doc.docstatus == 0 %} Status : Draft {% endif %}</p>
+    </div>
+</div>
+
+
+<div style="width: 100%;padding-top: 30px;float: left;">
+    <div style="width: 50%;float: left;">
+        <p style="font-size: 15px;color: black;font-weight: 600;">Stebilex Systems LLC</p>
+        {% if doc.company %}
+        {% set address_name = frappe.get_doc('Address',doc.company) %}
+                
+        <p style="font-size: 13px;color: black;">
+            {% if address_name %}
+            {% if address_name.address_line1 %} {{ address_name.address_line1 }}{% endif %}<br>
+            {% if address_name.address_line2 %}{{ address_name.address_line2 }}<br> {% endif %}
+            {% if address_name.city %} {{ address_name.city}},{% endif %}
+            {% if address_name.state %} {{address_name.state}} <br>{% endif %}
+            {% if address_name.country %} {{address_name.country}}<br> {% endif %}
+            {% if address_name.phone %} Phone: {{address_name.phone}} <br> {% endif %}
+            {% if address_name.email_id %} Email: {{address_name.email_id}} <br> {% endif %}
+        {% endif %}
+        {% set tax = frappe.get_doc('Company',doc.company) %}
+        {% if tax.tax_id %}TRN: {{tax.tax_id}} {% endif %}
+        </p>
+        
+        {% endif %}
+    </div>
+    <!-- <div style="width: 50%;float: right;">
+        <p style="font-size: 15px;color: black;font-weight: 600;text-align: end;">Balance Due</p>
+        <p style="font-size: 15px;color: black;font-weight: 600;text-align: end;">{{doc.currency}} {{doc.total}}</p>
+    </div> -->
+</div>
+
+<div style="width: 100%;padding-top: 30px;">
+    <div style="width: 50%;float: left;padding-top: 10px;">
+        <div>
+            <p style="font-size: 13px;color: black;">Bill To</p>
+            <p style="font-size: 13px;color: black;">
+                <b>{% if doc.customer %} {{doc.customer}} {% endif %}</b><br>
+                {% if doc.customer_address %}
+                    {% set customer_address =frappe.get_doc('Address',doc.customer_address) %}
+                    {% if customer_address.address_line1 %} {{ customer_address.address_line1 }},<br>{% endif %}
+                    {% if customer_address.address_line2 %} {{ customer_address.address_line2 }},<br>{% endif %}
+                    {% if customer_address.city %}{{ customer_address.city}} <br> {% endif %}
+                    {% if customer_address.state %} {{customer_address.state}} <br> {% endif %}
+                    {% if customer_address.pincode %} {{customer_address.pincode}} <br> {% endif %}
+                    
+                    {% set cus_tax = frappe.get_doc('Customer',doc.customer) %}
+                    {% if cus_tax.tax_id %}TRN: {{ cus_tax.tax_id }}<br> {% endif %}
+                    {% if customer_address.phone %} {{customer_address.phone}} <br> {% endif %}
+                {%endif%}
+            </p>
+        </div>
+
+        <div style="padding-top: 10px;">
+            <p style="font-size: 13px;color: black;">Ship To</p>
+            <p style="font-size: 13px;color: black;">
+                <b>{% if doc.shipping_address_name %} {{doc.shipping_address_name}} {% endif %}</b><br>
+                {% if doc.shipping_address_name %}
+                    {% set ship_address =frappe.get_doc('Address',doc.customer_address) %}
+                    {% if ship_address.address_line1 %} {{ ship_address.address_line1 }},<br>{% endif %}
+                    {% if ship_address.address_line2 %} {{ ship_address.address_line2 }},<br>{% endif %}
+                    {% if ship_address.city %}{{ ship_address.city}} <br> {% endif %}
+                    {% if ship_address.state %} {{ship_address.state}} <br> {% endif %}
+                    {% if ship_address.pincode %} {{ship_address.pincode}} <br> {% endif %}
+                    
+                    {% set cus_tax = frappe.get_doc('Customer',doc.customer) %}
+                    {% if cus_tax.tax_id %}TRN: {{ cus_tax.tax_id }}<br> {% endif %}
+                    {% if ship_address.phone %} {{ship_address.phone}} <br> {% endif %}
+                {%endif%}
+            </p>
+        </div>
+    </div>
+    <div style="width: 50%;float:right;padding-top: 30px;">
+        <table class="tbl1" style="width:100%;float:left">
+            <tr>
+                <td style="color:black;">Invoice Date</td>
+                <td>:</td>
+                <td style="color:black;">{% if doc.posting_date %} {{ doc.get_formatted('posting_date') }} {% endif %}</td>
+            </tr>
+            <tr>
+                <td style="color:black;">Terms</td>
+                <td>:</td>
+                <td style="color:black;">{% if doc.payment_terms_template %} {{doc.payment_terms_template}} {% endif %}</td>
+            </tr>
+            <tr>
+                <td style="color:black;">Due Date</td>
+                <td>:</td>
+                <td style="color:black;">{% if doc.due_date %} {{ doc.get_formatted('due_date') }} {% endif %}</td>
+            </tr>
+            <tr>
+                <td style="color:black;">P.O.#</td>
+                <td>:</td>
+                <td style="color:black;">{% if doc.items[0].prevdoc_docname %}{{ doc.items[0].prevdoc_docname }}{% endif %}</td>
+            </tr>
+            <tr>
+                <td style="color:black;">Sales Person</td>
+                <td>:</td>
+                <td style="color:black;">{% if doc.custom_sales_person %} {{doc.custom_sales_person}}{% endif %}</td>
+            </tr>
+            <tr>
+                <td style="color:black;">VAT No</td>
+                <td>:</td>
+                <td style="color:black;">
+                {% if doc.customer %}
+                    {% set tax_id = frappe.get_doc("Customer",doc.customer) %}
+                    {% if tax_id.tax_id %}    
+                        {{tax_id.tax_id}}
+                    {% endif %}
+                {% endif %}
+                </td>
+            </tr>
+            <tr>
+                <td style="color:black;white-space: nowrap;">Customer PO</td>
+                <td>:</td>
+                <td style="color:black;">{% if doc.po_no %} {{ doc.po_no }} {% endif %}</td>
+            </tr>
+        </table>
+    </div>
+</div>
+    
+
+
+<div style="width:100%;">
+    <table style="width:100%;margin-top:30px !important;">
+        <thead style="margin-bottom:5px !important;background-color: lightgray;">
+
+<tr>
+    <th style="text-align:center;font-size:12px;font-weight:600;color:black;">SI.No</th>
+    <th style="text-align:left;font-size:12px;font-weight:600;color:black;">Item & Description</th>
+    <th style="text-align:center;font-size:12px;font-weight:600;color:black;">Qty</th>
+    <th style="text-align:center;font-size:12px;font-weight:600;color:black;">Rate</th>
+    <th style="text-align:center;font-size:12px;font-weight:600;color:black;white-space: nowrap;">Tax(%)</th>
+    <th style="text-align:center;font-size:12px;font-weight:600;color:black;">Tax</th>
+    
+    <th style="text-align:center;font-size:12px;font-weight:600;color:black;">Amount</th>
+</tr>
+</thead>
+
+<tbody>
+    {% for row in doc.items %}
+        
+        <tr style="border-bottom:1px solid lightgray;">
+            <td style="font-size: 12px;color:black;text-align: center;">{{ loop.index }}</td>
+            <td style = "text-align: left;font-size:12px;color:black;">
+                <b>{{ row.item_name }}</b><br>
+                <b>SKU : {% if row.item_code %} {{row.item_code}} {% endif %}</b><br>
+                {% set description_text = row.description | replace ('<div class="ql-editor read-mode">','') | replace('</div>','') %}
+            	<div style="width:100%;font-size:12px;color:black;">
+                	{{ description_text }}
+                </div>
+
+                {% if frappe.db.exists('Product Bundle',row.item_code) %}
+                {% set bundle = frappe.get_doc('Product Bundle',row.item_code) %}
+                {% else %}
+                {% set bundle = "" %}
+                {% endif %}
+                {% if bundle %}
+                    {% for data in bundle.items %}
+                        
+                        <p style="font-size: 11px;color: black;">{{loop.index}})  [{{data.item_code}}] {% if data.description %} {{data.description}} {% endif %} - {{"%.0f"|format (data.qty)}} {{data.uom}}</p>
+
+                    {% endfor %}
+                {% endif %}
+
+
+            </td>
+            <td style = "text-align:center;font-size:12px;color:black;">{{"%.0f"|format(row.qty)}} {{row.uom}}</td>
+            <td style = "text-align:right;font-size:12px;color:black;white-space:nowrap;">{{frappe.utils.fmt_money(row.rate,currency=doc.currency)}}</td>
+            
+            <td style = "text-align:center;border-right:none;font-size:12px;color:black;">
+                {% if doc.item_tax_template %}
+                    {% set tax_template = frappe.get_do('Item Tax Template',doc.item_tax_template) %}
+                    {% for data in tax_template.taxes %}
+                        {{data.tax_rate}}
+                    {% endfor %}
+                {% elif doc.taxes %}
+                    {{doc.taxes[0].rate}}
+                {% else %}
+                    {{0}}
+                {% endif %} 
+                
+            </td>
+            <td style = "text-align:right;border-right:none;font-size:12px;color:black;white-space: nowrap;"> 
+                {% if row.item_tax_template %}
+                    {% set tax_template = frappe.get_doc('Item Tax Template', row.item_tax_template) %}
+                    {% for data in tax_template.taxes %}
+                        {{ frappe.utils.fmt_money((row.rate * row.qty * data.tax_rate / 100), currency=doc.currency) }}
+                    {% endfor %}
+                {% elif doc.taxes %}
+                    {{ frappe.utils.fmt_money((row.rate * row.qty * doc.taxes[0].rate / 100), currency=doc.currency) }}
+                {% else %}
+                    {{0}}
+                {% endif %}
+
+            </td>
+           <td style = "text-align:right;font-size:12px;color:black;white-space:nowrap;">
+            {% if row.item_tax_template %}
+                {% set tax_template = frappe.get_doc('Item Tax Template', row.item_tax_template) %}
+                {% for data in tax_template.taxes %}
+                    {{ frappe.utils.fmt_money((row.rate * row.qty * (data.tax_rate / 100 + 1)), currency=doc.currency) }}
+                {% endfor %}
+            {% elif doc.taxes %}
+                {{ frappe.utils.fmt_money((row.rate * row.qty * (doc.taxes[0].rate / 100 + 1)), currency=doc.currency) }}
+            {% else %}
+                {{ frappe.utils.fmt_money((row.rate * row.qty), currency=doc.currency) }}
+            {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+        <tr style="border-bottom: 1px solid lightgray;">
+            <td></td>
+            <td></td>
+            <td></td>
+            <td style="font-size: 12px;color: black;text-align: center;white-space: nowrap;">Sub Total</td>
+            <td></td>
+            
+            <td style="font-size: 12px;color: black;text-align: center;white-space: nowrap;">{% if doc.total_taxes_and_charges %} {{doc.currency}} {{doc.total_taxes_and_charges}}{% else %} {{0}} {% endif %}</td>
+            
+            
+            <td style="font-size: 12px;color: black;text-align: right;white-space: nowrap;">{{doc.currency}} {{doc.grand_total}}</td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<div style="width: 100%;float: right;">
+    <div style="width: 50%;float: left;">
+        <p style="font-size: 12px;color: black;">Items in Total : {{doc.total_qty | int}}</p>
+    </div>
+
+    <div style="width: 100%;float: right;">
+        <table id="td2" width="50%;" style="float: right;line-height:1px;">
+            
+            <tr>
+                <td style="font-weight:600;color:blue">Sub Total</td>
+                <td></td>
+                <td style="font-weight:600;color:blue">{{ doc.currency }} {{frappe.utils.fmt_money(doc.net_total)}}</td>
+            </tr>
+            <tr>
+                <td style="font-weight:600;color:blue">Standard Rate {% if doc.taxes %} ({{doc.taxes[0].rate | int}})%  {% else %} ({{0}}) {% endif %}</td>
+                <td></td>
+                <td style="font-weight:600;color:blue">{% if doc.total_taxes_and_charges %} {{ doc.currency }} {{frappe.utils.fmt_money(doc.total_taxes_and_charges)}} {% else %} {{0}} {% endif %}</td>
+            </tr>
+            <tr>
+                <td style="font-weight:600;color:blue">Total</td>
+                <td></td>
+                <td style="font-weight:600;color:blue">{{ doc.currency }} {{ frappe.utils.fmt_money (doc.grand_total)}}</td>
+            </tr>
+            {% if doc.status == "Partly Paid" or doc.status == "Unpaid" %}
+            <tr>
+                <td style="font-weight:600;color:blue">Payment Made</td>
+                <td></td>
+                <td style="font-weight:600;color:red">
+                {% set balance = doc.outstanding_amount - doc.grand_total %}
+                {{ doc.currency }}  {{frappe.utils.fmt_money(balance)}}
+                </td>
+            </tr>
+            <tr>
+                <td style="font-weight:600;color:blue">Balance Due</td>
+                <td></td>
+                <td style="font-weight:600;color:blue">{{ doc.currency }}  {% if doc.outstanding_amount %} {{frappe.utils.fmt_money(doc.outstanding_amount)}} {% endif %} </td>
+            </tr>
+            {% endif %}
+        </table> 
+    </div>
+
+</div>
+<div>
+    <p style="font-size: 13px;color: black;">Total in Words : {{doc.in_words}}</p>
+</div>
+
+{% if doc.taxes %}
+<div style="width:100%;float:left">
+    <p style="float: left;font-size: 13px;color: black;width: 100px;">Tax Summary</p>
+        <table style="width: 100%;"> 
+            <thead style="border-bottom:1px solid black;background-color: whitesmoke;">
+                <tr>
+                    <td style="padding:5px !important;text-align:left;"><span style="font-size:12px;font-weight:600;">Tax Details</span></td>
+                    <td style="padding:5px !important;text-align:right;"><span style="font-size:12px;font-weight:600;">Taxable Amount</span></td>
+                    <td style="padding:5px !important;text-align:right;"><span style="font-size:12px;font-weight:600;">Tax Amount</span></td>
+                </tr>
+            </thead>
+            <tbody>
+                <tr style="border-bottom:1px solid black;">
+                    <td style="font-size:12px;color:black;text-align: left;">
+                        VAT {% if doc.taxes %} ({{doc.taxes[0].rate | int}})%  {% else %} ({{0}}) {% endif %}
+                    </td>
+                    <td style="font-size:12px;color:black;text-align: right;">{{frappe.utils.fmt_money (doc.total,currency=doc.currency)}}</td>
+                    <td style="font-size:12px;color:black;text-align: right;">
+                        {% if doc.taxes %}   {{frappe.utils.fmt_money(doc.taxes[0].tax_amount,currency=doc.currency)}} {% endif %}
+                       </td>
+                </tr>
+               <tr style="border-bottom: 1px solid black;">
+                <td style="font-size:12px;color:black;text-align: left;font-weight:600;">Total</td>
+                <td style="font-size:12px;color:black;text-align: right;font-weight:600;">{{frappe.utils.fmt_money(doc.total,currency=doc.currency)}}</td>
+                <td style="font-size:12px;color:black;text-align: right;font-weight:600;">{% if doc.taxes %}{{frappe.utils.fmt_money(doc.taxes[0].tax_amount,currency=doc.currency)}} {% endif %}</td>
+               </tr>
+            </tbody>
+        </table>
+</div>
+{% endif %}
+<div style="width: 100%;float:left;padding-top:10px;">
+    <p style="font-size: 13px;color:black;text-align: left;">Notes</p>
+    <p style="font-size: 13px;color:black;text-align: left;">
+        Thanks for your business.<br>
+        [Please note that all product pictures shown are for illustration purpose only. The actual products may vary]<br>
+        [Any equipment required for unloading the materials needs to be arranged by the client]<br>
+    </p>
+</div>
+
+{% if doc.tc_name %}
+<div style="width:100%;padding-top:10px;">
+    <table style="float:left; width:100% !important;">
+        <tr>
+            <td style="padding:0px !important;text-align:justify;">
+                {{ doc.terms}}
+            </td>
+        </tr>
+    </table>
+</div>
+{% endif %}

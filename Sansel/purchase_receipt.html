@@ -1,0 +1,66 @@
+<style>
+    [document-status] {
+        display:none;
+    }
+    .print-heading {
+        display:none;
+    }
+</style>
+
+<div style="width: 100%;padding-top:20px;padding-bottom: 20px;">
+    <div style="width: 32%;float: left;">
+        <p style="font-size: 13px;color: black;font-weight: 600;">No : {{doc.name}}</p>
+    </div>
+    <div style="width: 40%;float: left;border-radius: 10px;border: 1px solid black;">
+        <p style="font-size: 16px;color: black;font-weight: 600;text-align: center;">Goods Receipt Note</p>
+    </div>
+    <div style="width: 20%;float: right;">
+        <p style="font-size: 13px;color: black;font-weight: 600;">Date : {% if doc.posting_date %} {{doc.get_formatted('posting_date')}} {% endif %}</p>
+    </div>
+</div>
+
+<div style="width: 100%;float: left;padding-top:30px;">
+    <p style="font-size: 13px;color: black;font-weight: 600;">Supplier's Name : {% if doc.supplier_name %} {{doc.supplier_name}} {% endif %}</p>
+</div>
+
+<div style="width: 100%;float: left;padding-top: 10px;">
+    <div style="width: 50%;float:left;">
+        <p>Invoice No : {{doc.supplier_invoice_no}}</p>
+    </div>
+    <div style="width: 50%;float:right;">
+        <p>Invoice Date : {% if doc.supplier_invoice_date %} {{doc.supplier_invoice_date}} {% endif %}</p>
+    </div>
+</div>
+
+<div style="width: 100%;float: left;padding-top: 25px;">
+    <table style="width: 100%;">
+        <thead>
+            <tr>
+                <th style="font-size:13px;color:black;border: 1px solid black;font-weight: 600;text-align: center;">S.No</th>
+                <th style="font-size:13px;color:black;border: 1px solid black;font-weight: 600;text-align: center;">Items</th>
+                <th style="font-size:13px;color:black;border: 1px solid black;font-weight: 600;text-align: center;">Qty</th>
+                <th style="font-size:13px;color:black;border: 1px solid black;font-weight: 600;text-align: center;">Remarks</th>
+            </tr>
+        </thead>
+        {% for row in doc.items %}
+        <tr>
+            <td style="font-size: 13px;color:black;border: 1px solid black;text-align: center;">{{loop.index}}</td>
+            <td style="font-size: 13px;color:black;border: 1px solid black;text-align: start;">{{row.item_name}}</td>
+            <td style="font-size: 13px;color:black;border: 1px solid black;text-align: center;">{{row.qty | int }}</td>
+            <td style="font-size: 13px;color:black;border: 1px solid black;text-align: center;"></td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+
+<div style="width: 100%;padding-top:30px;float: left;">
+    <div style="width: 32%;float:left;">
+        <p style="font-size:13px;color:black;font-weight: 600;">Prepared by</p>
+    </div>
+    <div style="width: 40%;float:left;">
+        <p style="font-size:13px;color:black;font-weight: 600;text-align: center;">Approved by</p>
+    </div>
+    <div style="width: 20%;float:right;">
+        <p style="font-size:13px;color:black;font-weight: 600;">Entered by</p>
+    </div>
+</div>

@@ -1,0 +1,361 @@
+<style>
+    /*.print-format*/
+/*{*/
+/*    padding: 20px; */
+/*    background-size: contain; */
+/*    background-repeat: no-repeat; */
+/*    background-position-x: center;*/
+
+    #tbl1 td {
+        font-size: 13px; 
+        line-height: 1px; 
+        color: black; 
+        padding : 9px 12px !important;
+    }
+    #tbl2 { 
+        margin-top: 5px; 
+    } 
+    #tbl2 tr
+    {
+        border:1px solid grey;
+    }
+    #tbl2 th {
+        font-size: 12px;
+        color: black;
+        text-align: center;
+        font-weight: 600 !important;
+        padding: 3px !important;
+        font-style: italic;
+        line-height: 15px;
+
+    }
+    #tbl2 td {
+        /*border:1px solid black;*/
+        font-size:12px; 
+        color:black; 
+        text-align:center;
+        vertical-align: middle !important;
+        padding : 5px !important;
+    }
+    #tbl3 { 
+        border-collapse: collapse; 
+        width:100%; 
+        
+    }
+    #tbl4 {
+        border-collapse: collapse; 
+        width:100%;
+    }
+    #tbl5 { 
+        border-collapse: collapse; 
+        width:100%; 
+        border:1px solid black; 
+    } 
+    #tbl3 td 
+    {
+        /*padding: 5px !important; */
+    }
+    #tbl4 td
+    {
+        /*padding: 5px !important;*/
+    }
+    #tbl5 td {
+        /*padding: 5px !important; */
+    }
+    #tbl_color:nth-child(even) {
+    background-color: #D3D3D3;
+    }
+</style>
+
+
+
+<!--first table-->
+{% set e_invoice_log = frappe.db.get_value(
+    "e-Invoice Log", doc.irn, ("invoice_data", "signed_qr_code"), as_dict=True
+) %}
+{%set invoice_data = ""%}
+{%if e_invoice_log%}
+{%- set invoice_data = _dict(json.loads(e_invoice_log.invoice_data)) -%}
+{%endif%}
+
+{% set total_tax = {"cgstt":0,"sgstt":0,"igstt":0} %}
+       {%set tax_type = {"is_incl_tax":0}%}
+        {% set sales_taxes = frappe.db.get_all("Sales Taxes and Charges",filters={"parent":doc.name,"tax_amount":(">",0)},fields=['included_in_print_rate'])%}
+        {%if sales_taxes%}
+            {%if sales_taxes[0].included_in_print_rate==1%}
+             {% set _ = tax_type.update({"is_incl_tax":1} ) %}
+            {%endif%}
+        {%endif%}
+        {% set taxes = {"cgst":0,"sgst":0,"igst":0} %}
+        
+        
+
+{% set page = {"count":0} %}
+{% set global = {"count":0} %}
+{% set item = {"count":0} %}
+{% set count = {"count":0} %}
+{% set total_pages = {"count":1} %}
+{% for value in doc.items %}
+    {% set _ = item.update({"count":item.count+1}) %}
+    {% set _ = count.update({"count":count.count+1}) %}
+    {% if 200-count.count*25 < 0 %}
+        {% set _ = total_pages.update({"count":total_pages.count+1}) %}
+        {% set _ = count.update({"count":0}) %}
+    {% endif %}
+{% endfor %}
+{% set _ = count.update({"count":0}) %}
+{% for k in range(0, 10) %}
+    {% if global.count < item.count %}
+<div style = "border:1px
+solid black;border-radius:10px;">
+    
+    <table width="100%">
+       <tr>
+            <td width="145px" style="
+    padding: 5px !important;
+"> <img src="/files/logo.jpg" width="100%" style="height:130px;width: auto !important;"></td>
+            <td style="
+    padding: 5px !important;">
+                <p style="font-weight:600;color:black;font-size: 20px;white-space:nowrap;">Sree Mahalakshmi Agencies</p>
+                <p style="font-size:13px;color:black;line-height:19px;">
+                    No. 9, Lotus Nagar, Thattankulam Road, Madhavaram <br>
+                    Chennai 600060, Tamil Nadu<br>
+                    (M) +91 98400 70822,(E) accounts@sma-chennai.in<br>
+                    GST No. 33AAHPJ0196K1ZO<br>
+                    PAN No. AAHPJ0196K &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <b style="text-align:right;font-size:18px;font-weight:600;float: right;">
+                        {% if doc.is_return %}
+                        Credit Note
+                        {%elif doc.docstatus==0%}
+                        Draft
+                        {%else%}
+                        Tax Invoice
+                        {%endif%}
+                    </b>
+
+                </p>
+            </td>
+            <td align="right" style="padding: 5px !important;">
+              
+{%if e_invoice_log%}  <img style="width: auto !important;height: 115px;" width = "100%" src="data:image/png;base64,{{ get_qr_code(e_invoice_log.signed_qr_code, scale=2) }}" class="qrcode">
+                <br><center style = "width:110px;font-weight:600;color:black;font-size:12px;">E - Invoice</center>
+
+                {%endif%}
+            </td>
+        </tr>
+    </table>
+</div> 
+
+<!--second table-->
+<div style = "margin-top: 4px;border-radius:10px;border:1px solid black;float:left;width:100%;margin-bottom: 5px;">
+    <div style = "width:46%;float:left;">
+        <p style = "font-size:13px;color:black;font-weight:600 !important;margin-top:-5px;height:20px;padding: 8px 5px !important;">Bill To (Buyer & Consignee)</p>
+        
+            <div>
+                <p style = "font-size:13px;color:black;line-height:18px;padding: 5px 5px !important;margin-bottom: 0;padding-bottom: 0;">
+                    <b>Customer Id : {{ doc.customer }}</b><br>
+                    <b>{{ doc.customer_name }}</b><br>
+                    {% if doc.customer_address %}
+                    {% set address=frappe.get_doc('Address',doc.customer_address) %}
+                    {{ address.address_line1 }},<br>
+                    {% if address.address_line2 %}
+                    {{ address.address_line2 }},<br>
+                    {% endif %}
+                    {{ address.city}},Pincode : {{address.pincode}}<br>
+                    GST No.{{ address.gstin }}
+                    {% endif%}
+                    {% if doc.contact_person %}
+             {% set contacts = frappe.get_doc("Contact",doc.contact_person) %}{% if contacts.phone_nos  %}(M)+91{{contacts.phone_nos[0].phone}}{% endif %}{% endif %}
+                </p>
+            </div>
+           
+    </div>
+
+    <div style = "width:30%;float:left;font-size :13px;color:black;">
+        
+        <p style="margin-bottom: -3px;">Sales Order No :{% if doc.items.sales_order %}{{doc.items[0].sales_order}} {% endif %}</p>
+        
+        <p style="margin-bottom: -3px;">Invoice No : {{ doc.name }}</p>
+        <p style="margin-bottom: -3px;">Invoice Date : {{doc.get_formatted("posting_date")}}</p>
+        
+        <p style="margin-bottom: -3px;">E-Way Bill No : {% if doc.ewaybill %}{{doc.ewaybill }}{% endif %}</p>
+        
+        <p style="margin-bottom: -3px;">Place of Supply : {{doc.place_of_supply}}</p>
+        
+        <p style="margin-bottom: -3px;">Contact No : {% if doc.contact_person %}
+     {% set contacts = frappe.get_doc("Contact",doc.contact_person) %}{% if contacts.phone_nos %}+91{{contacts.phone_nos[0].phone}}{% endif %}{% endif %}</p>
+        
+        <div style = "font-size :13px;color:black;">
+        
+       
+        
+        </div>
+    
+    </div>
+    
+    <div style = "font-size :13px;color:black;">
+        <p>Transport :{% if doc.mode_of_transport %} {{doc.mode_of_transport}}{% endif %}</p>
+        <p>Vehicle No : {% if doc.vehicle_no %}{{doc.vehicle_no}}{% endif %}</p>
+    </div>
+    {%if doc.irn%}
+<p style="
+    float: left;
+    width: 100%;
+    margin-top: -5px;
+    margin-left: 5px;
+">IRN No : {%if e_invoice_log%}{%if e_invoice_log%}{{doc.irn}}{%endif%}{% endif %}</p>
+{%endif%}
+</div>
+
+
+
+<!--third table-->
+<table id = "tbl2" width = "100%" style = "border:1px solid grey;height:{% if item.count - global.count <= 8 %} 400px {% else %} 500px {% endif %}"> 
+    <tr height=50px>
+        <th>S.No</th>
+        <th style="width:300px">Product Description</th>
+        <th>Qty.</th>
+        <th>Free</th>
+        <th >Rate in Rs.</th>
+        <th>Taxable value in Rs.</th>
+        <th style = "width:110px;">GST Amount in Rs.</th>
+        <th style = "width:110px;">Total Amount in Rs.</th>
+    </tr>
+    {% for i in range(global.count, item.count) %}
+            {% if 200-count.count*25 > 0 %}
+        
+        {% set row_tax_amount = {"tax_amount":0} %}
+        {%if doc.items[i].item_tax_rate%}
+        {% set item_tax = json.loads(doc.items[i].item_tax_rate) %}
+        {% for i in item_tax %}
+            {% if "CGST" in i %}
+                {% set _ = taxes.update({"cgst":item_tax[i]} ) %}
+            {% elif "SGST" in i %}
+                {% set _ = taxes.update({"sgst":item_tax[i]} ) %}
+            {% else %}
+                {% set _ = taxes.update({"igst":item_tax[i]} ) %}
+            {% endif %}
+        {% endfor %}
+ {%endif%}
+         
+    <tr id = "tbl_color" style="height:50px">
+        
+        <td>{{loop.index}}</td>
+        <td style = "text-align:left;padding:0px !important;line-height: 18px">{{doc.items[i].item_name}}<br>HSN : {{doc.items[i].gst_hsn_code}},GST :{{taxes.igst | int}}% </td>
+        <td>{{"%.0f"|format(doc.items[i].qty)}}</td>
+        <td>{{doc.items[i].is_free_item}}</td>
+        <td style = "white-space:nowrap;text-align:right;padding:5px !important;">{{frappe.utils.fmt_money(doc.items[i].rate)}}</td>
+
+        <td style = "text-align:right;padding:5px !important;width:85px;">{{frappe.utils.fmt_money(doc.items[i].net_amount)}}</td>
+        
+        <td>
+            <span style = "text-align:left;font-size:12px;float:left;">IGST</span>
+            <span style = "font-size:12px;color:black;float:right;">{%if tax_type.is_incl_tax==1%}
+                    {{ frappe.utils.fmt_money(((doc.items[i].amount|abs)-(((doc.items[i].amount|abs)/((taxes.igst)+100|abs))*100))/1)}}
+                    {%else%}
+                    {{ frappe.utils.fmt_money(((doc.items[i].amount|abs)*(taxes.igst/100)/2),)}}
+                    {%endif%} 
+                    {%if tax_type.is_incl_tax==1%}
+                        {% set _ = total_tax.update({"igstt":total_tax["igstt"]+(((doc.items[i].amount|abs)-(((doc.items[i].amount|abs)/(taxes.igst+100|abs))*100))/1) })%}
+                        {% set _ = row_tax_amount.update({"tax_amount":row_tax_amount["tax_amount"]+(((doc.items[i].amount|abs)-(((doc.items[i].amount|abs)/(taxes.igst+100|abs))*100))/2) })%}
+                    {%else%}
+                        {% set _ = total_tax.update({"igstt":total_tax["igstt"]+(((doc.items[i].amount|abs)*(taxes.igst/100))/2) })%}
+                        {% set _ = row_tax_amount.update({"tax_amount":row_tax_amount["tax_amount"]+(((doc.items[i].amount|abs)*(taxes.igst/100))/1) })%}
+
+                    {% endif %}
+                
+            </span>
+                
+        </td>
+        <td style = "text-align:right;padding:5px !important;">{{frappe.utils.fmt_money(doc.items[i].amount)}}</td>
+    </tr>
+    {% set _ = count.update({"count":count.count+1}) %}
+        {% set _ = global.update({"count":global.count+1}) %}
+        {% endif %}
+    {% endfor %}
+    {% set _ = count.update({"count":0}) %}
+    <tr><td></td></tr>
+    </table>
+    {% if global.count == item.count %}
+    <table width = "100%" style="border-left:1px solid black;border-right:1px solid black;">
+    <tr>
+        <td></td>
+        <td style = "white-space:nowrap;font-weight:600 !important;font-size:13px;">Grand Total</td>
+        <td style = "white-space:nowrap;font-weight:600 !important;font-size:13px;text-align:center;padding:5px !important;">{{ "%.0f"|format(doc.total_qty) }}</td>
+        <td></td>
+        <td style = "white-space:nowrap;font-weight:600 !important;font-size:13px;"></td>
+        <!--<td style = "white-space:nowrap;font-weight:600 !important;font-size:13px;text-align:center;padding:5px !important;">{{frappe.utils.fmt_money(doc.grand_total - (total_tax.sgstt*2))}}</td>-->
+        <!--<td style = "white-space:nowrap;font-weight:600 !important;font-size:13px;text-align:right;padding:5px !important;">{{ frappe.utils.fmt_money(total_tax.sgstt + total_tax.sgstt)}}</td>--> 
+        <td style = "white-space:nowrap;font-weight:600 !important;font-size:13px;text-align:center;padding:5px !important;">{{frappe.utils.fmt_money(doc.net_total)}}</td> 
+        <td style = "white-space:nowrap;font-weight:600 !important;font-size:13px;text-align:right;padding:5px !important;">{{frappe.utils.fmt_money(total_tax.igstt)}}</td>
+        
+        <td style = "white-space:nowrap;font-weight:600 !important;font-size:13px;text-align:right;padding:5px !important;">{{ frappe.utils.fmt_money(doc.grand_total)}}</td>
+    </tr>
+</table>
+
+<table id = "tbl3" style="
+    margin-top: -1px;
+">
+    <tr style ="border:1px solid black;">
+        <td style="padding:3px 5px !important">
+            <p style = "font-size:12px;color:black;font-weight:600 !important;margin:0">Net Payable Amount is <br>
+            Amount in Words <span style = "font-size:11px;color:black;font-weight:100;">E. & O.E</span>
+            </p>
+        </td>
+        <td style="padding:3px 5px !important">
+           <p style = "font-size:12px;font-weight:600;text-align:end;color:black;margin:0;">{{ frappe.utils.fmt_money(doc.grand_total)}}<br>
+           {{frappe.utils.money_in_words(doc.grand_total)}}</p>
+        </td>
+    </tr>
+</table>
+       {% endif %}
+<table id = "tbl4" style="
+    margin-top: -1px;
+">
+    <tr style = "border:1px solid black;">
+        <td width = "55%" style = "border-right: 1px solid black; font-size:12px !important;color:black;padding:3px 5px !important;">
+            <b>Declaration:</b> We declare that this invoice shows the actual<br>
+                price of the goods described and that all particulars are true<br>
+                and correct. * Subject to Chennai Jurisdiction * 
+        </td>
+        <td width = "45%" style="border-right: 1px solid black;padding:3px 5px !important;">
+            <p style = "font-weight:600;font-size:12px !important;color:black;    margin-top: 0;">Delivery Address & Contact Details</p>
+            {% if doc.shipping_address %}
+            <p style = "font-size:13px !important;color:black;">{{doc.shipping_address}}</p>
+            {% endif %}
+        </td>
+    </tr>
+</table>
+
+
+<table id = "tbl5" width = "100%">
+    <tr>
+        <td style = "border:1px solid black;padding:3px 5px !important;">
+            <p style = "font-weight:600;font-size:12px;color:black;padding:0px !important;margin-top: 0;">Receivers Seal & Signature</p>
+        </td>
+        <td style = "border:1px solid black;padding:3px 5px !important;">
+            <div>
+                <p style = "font-size:12px;color:black;font-weight:600;margin-top: 0;">Payment Bank Details (NEFT/ RTGS)</p>
+                <p style = "font-size:12px;color:black;"> 
+                    Account Name : Sree Mahalakshmi Agencies<br>
+                    Account No   . 157150310875039<br>
+                    Bank         : TamilNadu Mercantile Bank (TMB)<br>
+                    Branch       : Perambur<br>
+                    IFSC         : TMBL0000157
+                </p>
+                <p style = "font-size: 12px;font-weight: 600;color: black;">GPAY:+91 98400 70822 (P Jegatheesan)</p>
+            </div>
+        </td>
+        <td style="padding:3px 5px !important;position:relative;">
+            <p style = "font-size:12px;color:black;font-weight:600;margin-top: 0;">For<br>Sree Mahalakshmi Agencies</p>
+            <p style = "font-size:12px;color:black;position: absolute;bottom: 3px;">(Authorised Signature)</p>
+        </td>
+    </tr>
+</table>
+{% set _ = page.update({"count":page.count+1}) %}
+    <div style="width:100%" id="foot">
+        <p style="text-align:center;">{{page.count}} of {{total_pages.count}}</p>
+    </div>
+    {% endif %}
+{% endfor %}
